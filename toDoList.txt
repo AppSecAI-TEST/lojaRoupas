@@ -1,0 +1,8 @@
+funcao controle de estoque
+funcao troca de "encomendado" para "no estoque"
+ao concluir a venda, dar baixa no estoque
+ao adicionar um produto na venda, verificar se ele está no estoque
+ao mostrar os caixas, calcular as vendas/devolucoes e mostrar tb
+solucao para o programa de penduras
+avisar a minha mae que nao dá pra botar desconto global para facilitar o valor da devolucao
+programar a devolucao de produto nao cadastrado

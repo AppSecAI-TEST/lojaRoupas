@@ -1,8 +1,14 @@
-funcao controle de estoque
-funcao troca de "encomendado" para "no estoque"
-ao concluir a venda, dar baixa no estoque
-ao adicionar um produto na venda, verificar se ele está no estoque
-ao mostrar os caixas, calcular as vendas/devolucoes e mostrar tb
+-funcao controle de estoque
+-funcao troca de "encomendado" para "no estoque"
+-ao concluir a venda, dar baixa no estoque
+-ao adicionar um produto na venda, verificar se ele está no estoque
+-ao mostrar os caixas, calcular as vendas/devolucoes e mostrar tb
 solucao para o programa de penduras
-avisar a minha mae que nao dá pra botar desconto global para facilitar o valor da devolucao
-programar a devolucao de produto nao cadastrado
+-avisar a minha mae que nao dá pra botar desconto global para facilitar o valor da devolucao
+-programar a devolucao de produto nao cadastrado
+-ao adicionar um produto na venda, se ele for "Encomendado", perguntar se quer trocar para em estoque e adicioná-lo na vendas
+-ao efetuar a venda, dar a opção para escolher entre o usuário que efetuou a venda
+-fazer o botão de adicionar cliente funcionar
+-ao adicionar ou retirar dinheiro do caixa, criar uma transacao
+-trocar o sistema de consulta para consultar sempre que muda o JTextField
+-botar perguntas "tem certeza ...."

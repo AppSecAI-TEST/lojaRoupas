@@ -6,6 +6,7 @@
 package PanelsCadastro;
 
 import Main.Main;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -48,7 +49,7 @@ public class PanelCliente_Fornecedor extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         descField = new javax.swing.JTextField();
 
-        jLabel1.setText("Nome:");
+        jLabel1.setText("Nome Completo*:");
 
         jLabel2.setText("Cel 1:");
 
@@ -107,7 +108,7 @@ public class PanelCliente_Fornecedor extends javax.swing.JPanel {
                     .addComponent(endField)
                     .addComponent(emailField)
                     .addComponent(nomeField))
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -159,12 +160,12 @@ public class PanelCliente_Fornecedor extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_fixoFieldActionPerformed
     public void insertCliente_Fornecedor(String nameTable){
-        if(isValidEntry()==false){
-            System.out.println("Entrada inválida");
+        if(isValidEntry()==false)
             return;
-        }
         String n=nomeField.getText();
         String cpf=cpfField.getText();
+        if(Main.isEmpty(cpf))
+            cpf="null";
         String cel1=cel1Field.getText();
         String cel2=cel2Field.getText();
         String fixo=fixoField.getText();
@@ -178,12 +179,17 @@ public class PanelCliente_Fornecedor extends javax.swing.JPanel {
         if(nameTable.equals("Fornecedor"))
             query = "INSERT INTO Fornecedor(Nome_Fornecedor, Telefone_Celular1, Telefone_Celular2, Telefone_Fixo, Endereco_Fornecedor, Email_Fornecedor, CPF_Fornecedor, Descricao_Fornecedor)"+
         " VALUES (\'"+n+"\', \'"+cel1+"\', \'"+cel2+"\', \'"+fixo+"\', \'"+end+"\',\'"+email+"\',"+cpf+",\'"+desc+"\')";
-        
         lojaDB.executeQuery(query);
+        JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);                     
     }
     boolean isValidEntry(){
         String n=nomeField.getText();
         if(n.equals("")){
+            JOptionPane.showMessageDialog(null, "O \'nome\' não pode estar vazio!", "Aviso", JOptionPane.WARNING_MESSAGE);                                 
+            return false;
+        }
+        if(n.split(" ").length<2){
+            JOptionPane.showMessageDialog(null, "Deve cadastrar pelo menos um sobrenome", "Aviso", JOptionPane.WARNING_MESSAGE);                                 
             return false;
         }
         String cpf=cpfField.getText();
@@ -201,6 +207,7 @@ public class PanelCliente_Fornecedor extends javax.swing.JPanel {
                 Integer.parseInt(fixo);
         }
         catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Os telefones e o cpf não podem conter letras!", "Aviso", JOptionPane.WARNING_MESSAGE);                                             
             return false;
         }        
         return true;

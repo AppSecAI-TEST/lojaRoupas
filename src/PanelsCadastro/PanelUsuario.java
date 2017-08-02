@@ -1,9 +1,9 @@
 package PanelsCadastro;
 
 import Main.Main;
+import javax.swing.JOptionPane;
 
 public class PanelUsuario extends javax.swing.JPanel {
-
     Main lojaDB;
     public PanelUsuario(Main lojaDB) {
         this.lojaDB=lojaDB;
@@ -12,7 +12,7 @@ public class PanelUsuario extends javax.swing.JPanel {
     public void insertUsuario(){
         String n=nomeField.getText();
         if(n.equals("")){
-            System.out.println("Entrada inválida");
+            JOptionPane.showMessageDialog(null, "O \'nome\' não pode ser vazio", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         String d=descField.getText();
@@ -20,6 +20,7 @@ public class PanelUsuario extends javax.swing.JPanel {
             n+"\',\'"+d+"\')";
         lojaDB.executeQuery(query);
         limparCampos();
+        JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);                     
     }
     void limparCampos(){
         nomeField.setText("");
@@ -34,7 +35,7 @@ public class PanelUsuario extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         descField = new javax.swing.JTextField();
 
-        jLabel1.setText("Nome: ");
+        jLabel1.setText("Nome Completo*: ");
 
         jLabel2.setText("Descrição: ");
 
@@ -51,7 +52,7 @@ public class PanelUsuario extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(descField, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
                     .addComponent(nomeField))
-                .addContainerGap(60, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

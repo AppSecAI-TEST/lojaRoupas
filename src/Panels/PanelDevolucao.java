@@ -9,25 +9,17 @@ import Main.Main;
 import java.awt.Dimension;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.util.HashSet;
-import java.util.Set;
 import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author Soraya
- */
 public class PanelDevolucao extends javax.swing.JPanel {
 
-    /**
-     * Creates new form PanelTroca
-     */
     JTable tableDevol;
     Main lojaDB;
-    String columnTableNames[] = new String[]{"Código", "Tipo", "Descrição", "Cliente", "Data da venda", "Valor Pago"};
+    String columnTableNames[] = new String[]{"Código", "Tipo", "Descrição", "Cliente", "Data da venda", "Desconto dado", "Valor Pago"};
     public PanelDevolucao(Main lojaDB) {
         this.lojaDB=lojaDB;
         initComponents();
@@ -35,6 +27,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
         JScrollPane scrollTable=new JScrollPane(tableDevol);
         tableDevolucaoPanel.removeAll();
         tableDevolucaoPanel.add(scrollTable); 
+        lojaDB.setComboBox("Cliente", "Nome_Cliente", clientInBox);
     }
     private void createTable(String[] columnNames){
         DefaultTableModel model;      
@@ -43,15 +36,20 @@ public class PanelDevolucao extends javax.swing.JPanel {
         tableDevol = new JTable(model);        
         tableDevolucaoPanel.setLayout(new BoxLayout(tableDevolucaoPanel, BoxLayout.PAGE_AXIS));     
         tableDevol.setDefaultEditor(Object.class, null);
+        tableDevolucaoPanel.setPreferredSize(new Dimension(420,100));
     }
     public void update(){
         setProductRegistred(true);
         String key = getKey();
         if(key!=null)
-            resultsOfSearch(getOption(), key);
+            resultsOfSearch(getOption(), key);      
     }
     public void setProductRegistred(boolean flag){
-        productNotRegistredCheckBox.setSelected(!flag);
+        productNotRegistredCheckBox.setSelected(!flag);  
+        jLabel4.setVisible(!flag);
+        valorField.setVisible(!flag);
+        //------------------------------------
+        //------------------------------------
         clientKeyField.setVisible(flag);
         dateKeyField.setVisible(flag);
         jLabel1.setVisible(flag);
@@ -61,7 +59,11 @@ public class PanelDevolucao extends javax.swing.JPanel {
         optionProduct.setVisible(flag);
         productKeyField.setVisible(flag);
         tableDevol.setVisible(flag);
-        tableDevolucaoPanel.setVisible(flag);
+        tableDevolucaoPanel.setVisible(flag);        
+        //------------------------------------
+        //------------------------------------      
+        inMoneyOption.setSelected(true);             
+        inMoneyOptionActionPerformed(null);  
     }    
     public void resultsOfSearch(String option, String keyOfSearch){
         Main.cleanTable(tableDevol);
@@ -69,7 +71,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
             Main.cleanTable(tableDevol);
             return;
         }            
-        keyOfSearch=Main.prepareToDB(keyOfSearch);
+        keyOfSearch=Main.prepareToSearch(keyOfSearch);
         String query="SELECT * From Transacao"; 
         ResultSet results = lojaDB.executeQuery(query);
         int width=100;
@@ -103,6 +105,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
                 String columns[]=new String[numberOfColumns];
                 for (int i = 0; i < numberOfColumns; i++) {
                     columns[i]=results.getString(i+1);
+                    columns[i]=Main.prepareToSearch(columns[i]);
                 }
                 String typeTransact = columns[columnOfTipoDeTransacao];
                 if(typeTransact.equals("venda")==false)
@@ -148,6 +151,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         optionClient = new javax.swing.JRadioButton();
         optionDate = new javax.swing.JRadioButton();
@@ -158,6 +162,22 @@ public class PanelDevolucao extends javax.swing.JPanel {
         tableDevolucaoPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         productNotRegistredCheckBox = new javax.swing.JCheckBox();
+        jLabel3 = new javax.swing.JLabel();
+        clientInBox = new javax.swing.JComboBox<>();
+        addClientButton = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        valorField = new javax.swing.JTextField();
+        concluirButton = new javax.swing.JButton();
+        inCreditOption = new javax.swing.JRadioButton();
+        inMoneyOption = new javax.swing.JRadioButton();
+        jLabel5 = new javax.swing.JLabel();
+        clientInField = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        dataField = new javax.swing.JTextField();
+        horaField = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        motivoField = new javax.swing.JTextField();
 
         jLabel1.setText("Localize o produto que será devolvido:  ");
 
@@ -211,7 +231,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
         );
         tableDevolucaoPanelLayout.setVerticalGroup(
             tableDevolucaoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 78, Short.MAX_VALUE)
+            .addGap(0, 80, Short.MAX_VALUE)
         );
 
         jLabel2.setText("Clique no produto a ser devolvido:");
@@ -223,6 +243,47 @@ public class PanelDevolucao extends javax.swing.JPanel {
             }
         });
 
+        jLabel3.setText("Cliente*: ");
+
+        clientInBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        addClientButton.setText("cadastrar novo cliente ");
+
+        jLabel4.setText("Valor do produto*: ");
+
+        valorField.setText(" ");
+
+        concluirButton.setText("Concluir devolução");
+        concluirButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                concluirButtonActionPerformed(evt);
+            }
+        });
+
+        buttonGroup2.add(inCreditOption);
+        inCreditOption.setText("Devolver em crédito para compras futuras");
+        inCreditOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inCreditOptionActionPerformed(evt);
+            }
+        });
+
+        buttonGroup2.add(inMoneyOption);
+        inMoneyOption.setText("Devolver em dinheiro");
+        inMoneyOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inMoneyOptionActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("Cliente*: ");
+
+        jLabel6.setText("Data*: ");
+
+        jLabel7.setText("Hora*: ");
+
+        jLabel8.setText("Motivo*: ");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -231,34 +292,68 @@ public class PanelDevolucao extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(productNotRegistredCheckBox)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(optionDate)
-                            .addComponent(optionClient)
+                            .addComponent(tableDevolucaoPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(optionProduct)
-                                .addGap(73, 73, 73)
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(productNotRegistredCheckBox))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(productKeyField, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(clientKeyField, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(dateKeyField, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jLabel2))
-                        .addContainerGap(82, Short.MAX_VALUE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(10, 10, 10)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(optionDate)
+                                            .addComponent(optionClient)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(optionProduct)
+                                                .addGap(73, 73, 73)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(productKeyField, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(clientKeyField, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(dateKeyField, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addComponent(jLabel2)))
+                                    .addComponent(jLabel1)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(1, 1, 1)
+                                        .addComponent(jLabel4)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(valorField, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(inCreditOption)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(clientInBox, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(addClientButton))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel5)
+                                            .addComponent(jLabel7)
+                                            .addComponent(jLabel8))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(dataField, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addComponent(horaField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                                                .addComponent(clientInField, javax.swing.GroupLayout.Alignment.LEADING))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(motivoField, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(concluirButton)))))
+                                .addGap(0, 30, Short.MAX_VALUE)))
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(tableDevolucaoPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())))
+                            .addComponent(inMoneyOption)
+                            .addComponent(jLabel6))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(productNotRegistredCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -272,13 +367,42 @@ public class PanelDevolucao extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(optionDate)
                     .addComponent(dateKeyField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tableDevolucaoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(inMoneyOption)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(inCreditOption)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(productNotRegistredCheckBox)
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(valorField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(clientInBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addClientButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(clientInField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(dataField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(horaField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(motivoField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(concluirButton))
+                    .addComponent(jLabel8))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     private String formatToSQL(String s){
@@ -316,7 +440,10 @@ public class PanelDevolucao extends javax.swing.JPanel {
             Double value = Double.parseDouble(elemOfProduct[5]);
             column[3] = client;
             column[4] = date;
-            column[5] = Main.twoDig(value-desc);
+            column[5] = Main.twoDig(desc);
+            column[6] = Main.twoDig(value-desc);
+            column[0]=Main.prepareToSearch(column[0]);
+            column[2]=Main.prepareToSearch(column[2]);            
             if(option.equals("codigoOuDescricao")) 
                 if(column[0].equals(key.trim())==false && column[2].contains(key)==false &&
                         key.contains(column[2])==false)
@@ -325,7 +452,9 @@ public class PanelDevolucao extends javax.swing.JPanel {
         }        
     }
     private void optionClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionClientActionPerformed
-        update();
+        String key = getKey();
+        if(key!=null)
+            resultsOfSearch(getOption(), key);
     }//GEN-LAST:event_optionClientActionPerformed
     
     private void clientKeyFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clientKeyFieldActionPerformed
@@ -339,11 +468,15 @@ public class PanelDevolucao extends javax.swing.JPanel {
     }//GEN-LAST:event_dateKeyFieldActionPerformed
 
     private void optionDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionDateActionPerformed
-        update();
+        String key = getKey();
+        if(key!=null)
+            resultsOfSearch(getOption(), key);
     }//GEN-LAST:event_optionDateActionPerformed
 
     private void optionProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionProductActionPerformed
-        update();
+        String key = getKey();
+        if(key!=null)
+            resultsOfSearch(getOption(), key);
     }//GEN-LAST:event_optionProductActionPerformed
 
     private void productKeyFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productKeyFieldActionPerformed
@@ -357,13 +490,104 @@ public class PanelDevolucao extends javax.swing.JPanel {
         else
             update();
     }//GEN-LAST:event_productNotRegistredCheckBoxActionPerformed
+
+    private void inCreditOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inCreditOptionActionPerformed
+        if(inCreditOption.isSelected()){
+            clientInBox.setVisible(true);
+            clientInField.setVisible(false);
+            jLabel5.setVisible(false);
+            addClientButton.setVisible(true);
+            jLabel3.setVisible(true);
+        }
+    }//GEN-LAST:event_inCreditOptionActionPerformed
+
+    private void inMoneyOptionActionPerformed(java.awt.event.ActionEvent evt) {                                              
+        if(inMoneyOption.isSelected())
+            clientInBox.setVisible(false);
+            addClientButton.setVisible(false);
+            jLabel3.setVisible(false);
+            clientInField.setVisible(true);
+            jLabel5.setVisible(true);
+    }
+
+    private void concluirButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
+        if(productNotRegistredCheckBox.isSelected()==false){
+            //product choosed in table
+            if(isValidSituationRegistred()==false)
+                return;
+            int r = tableDevol.getSelectedRow();
+            String barCode =tableDevol.getValueAt(r, 0).toString();
+            String tot = tableDevol.getValueAt(r, 6).toString();
+            String data = dataField.getText();
+            String hora = horaField.getText();
+            String motivo = motivoField.getText();
+            String client="";
+            if(inMoneyOption.isSelected())
+                client = clientInField.getText();
+            if(inCreditOption.isSelected())
+                client = Main.getChoosedComboBox(clientInBox);            
+            if(Main.isDateValid(data)==false || Main.isTimeValid(hora)==false){
+                JOptionPane.showMessageDialog(concluirButton, "Data ou hora inválida!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+                return;
+            }
+            data = Main.formatStringToSql("Date", data);
+            hora = Main.formatStringToSql("Time", hora);
+            String query1 = "UPDATE Mercadoria SET Status = \'no estoque\' WHERE ID_Mercadoria ="+barCode;                          
+            lojaDB.executeQuery(query1);
+            String query2 = "INSERT into Transacao(TipoDeTransacao, Valor_Total, Data_Transacao, Hora_Transacao, "
+                + "Descricao_Transacao, ID_Caixa, Observacao, Cliente) VALUES ("
+                    + "\"devolucao\","+ tot+","+data+","+hora+",\""+
+                    barCode+"\","+lojaDB.getOfCaixa("ID_Caixa")+",\"Motivo: "+motivo
+                    + "\",\""+client+"\")";            
+            lojaDB.executeQuery(query2);
+            
+            JOptionPane.showMessageDialog(null, "Devolução concluida com sucesso", "Aviso", JOptionPane.WARNING_MESSAGE);                                             
+            return;
+        }
+        if(productNotRegistredCheckBox.isSelected()){
+            if(isValidSituationNotRegistred()==false)
+                return;
+            //CODE HERE!!!!!!!!!!
+            
+            return;
+        }
+        //if(inMoneyOption.isSelected() && productNotRegistredCheckBox.isSelected()==false)
+
+    }
+    public boolean isValidSituationRegistred(){
+        int[] rows = tableDevol.getSelectedRows();
+        if(rows==null || rows.length!=1){
+            JOptionPane.showMessageDialog(null, "Selecione uma única mercadoria na tabela", "Aviso", JOptionPane.WARNING_MESSAGE);                                             
+            return false;
+        }
+        if(inCreditOption.isSelected()){
+            if(clientInBox.getSelectedIndex()==0){
+                JOptionPane.showMessageDialog(null, "Selecione um cliente para devolução por crédito em compras futuras", "Aviso", JOptionPane.WARNING_MESSAGE);                                             
+                return false;
+            }            
+        }   
+        String data = dataField.getText();
+        String hora = horaField.getText();
+        if(Main.isDateValid(data)==false || Main.isTimeValid(hora)==false){
+            JOptionPane.showMessageDialog(concluirButton, "Data ou hora inválida!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+            return false;
+        }
+        return true;
+    }
+    public void setDataHoraPanelDevol(){
+        if(Main.isEmpty(dataField.getText()))
+            dataField.setText(Main.SqlDateToNormalFormat(lojaDB.getOfCaixa("Data_Abertura")));
+    }
+    public boolean isValidSituationNotRegistred(){
+        return true;
+    }
     public String getKey(){
         if(optionProduct.isSelected())
-            return Main.prepareToDB(productKeyField.getText());
+            return Main.prepareToSearch(productKeyField.getText());
         if(optionClient.isSelected())
-            return Main.prepareToDB(clientKeyField.getText());
+            return Main.prepareToSearch(clientKeyField.getText());
         if(optionDate.isSelected())
-            return Main.prepareToDB(dateKeyField.getText());
+            return Main.prepareToSearch(dateKeyField.getText());
         return null;
     }
     public String getOption(){
@@ -376,16 +600,33 @@ public class PanelDevolucao extends javax.swing.JPanel {
         return null;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addClientButton;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JComboBox<String> clientInBox;
+    private javax.swing.JTextField clientInField;
     private javax.swing.JTextField clientKeyField;
+    private javax.swing.JButton concluirButton;
+    private javax.swing.JTextField dataField;
     private javax.swing.JTextField dateKeyField;
+    private javax.swing.JTextField horaField;
+    private javax.swing.JRadioButton inCreditOption;
+    private javax.swing.JRadioButton inMoneyOption;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JTextField motivoField;
     private javax.swing.JRadioButton optionClient;
     private javax.swing.JRadioButton optionDate;
     private javax.swing.JRadioButton optionProduct;
     private javax.swing.JTextField productKeyField;
     private javax.swing.JCheckBox productNotRegistredCheckBox;
     private javax.swing.JPanel tableDevolucaoPanel;
+    private javax.swing.JTextField valorField;
     // End of variables declaration//GEN-END:variables
 }

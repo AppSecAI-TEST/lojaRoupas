@@ -10,6 +10,8 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.LinkedList;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
@@ -96,10 +98,10 @@ public class Main {
         }         
         return true;
     }
-    public void setDataHoraPanelVenda(){
+    public void setDataHoraPanels(){
         if(tabbedPane==null)
             return;
-        tabbedPane.setDataHoraPanelVenda();
+        tabbedPane.setDataHoraPanels();
     }
     public void setBooleanCaixaAberto(){
         if(tabbedPane!=null)
@@ -187,7 +189,7 @@ public class Main {
         model.removeRow(row);
     }  
     public ResultSet executeQuery(String query){
-        query=prepareToDB(query);
+        //query=prepareToDB(query);
         Statement statement=pathConnection.statement;
         try {
             String operacao = query.split(" ")[0];
@@ -250,7 +252,9 @@ public class Main {
             return true;
         return false;
     }
-    public static String prepareToDB(String query){
+    public static String prepareToSearch(String query){
+        if(query==null)
+            return null;
         query=query.toLowerCase();
         String before[] = new String[]{"á", "à", "ã", "â", "ï", "è", "é", "ë", "ê", "î", "í", "ó", "õ", "ô", "ú", "ù", "û", "ç" };
         String after[] = new String[] {"a", "a", "a", "a", "i", "e", "e", "e", "e", "i", "i", "o", "o", "o", "u", "u", "u", "c" };
@@ -300,8 +304,8 @@ public class Main {
         }  
         return columnValue;
     }
-    public static void p(String s){
-        System.out.println(s);
+    public static void p(Object s){
+        System.out.println(s.toString());
     }
     public static String SqlDateToNormalFormat(String dataInSqlFormat){
         String[] separated=dataInSqlFormat.split("-");
@@ -343,7 +347,45 @@ public class Main {
         int numCol=table.getColumnCount();
         tablePanel.setPreferredSize(new Dimension(numCol*width,300));
     }
-    
+    public void setComboBox(String tableName, String columnName, JComboBox box){
+        String query="SELECT * From "+tableName;
+        ResultSet results = executeQuery(query);
+        int numberOfColumns=-1, columnOfDescricao=-1;
+        LinkedList <String> list =new LinkedList(); 
+        String s;
+        if(results==null)
+        {
+            System.out.println("Nenhum resultado da busca foi encontrado.");
+            return;
+        }
+        try{
+            ResultSetMetaData metaData = results.getMetaData();
+            numberOfColumns = metaData.getColumnCount();
+            columnOfDescricao=-1;
+            
+            for (int i = 0; i < numberOfColumns; i++) {
+                s=metaData.getColumnName(i+1);   
+                if(s.equals(columnName))
+                    columnOfDescricao = i;               
+            } 
+            for (int i=0;results.next();i++) {                
+                list.add(results.getString(columnOfDescricao+1));
+            }
+            int len=list.size();
+            String arrayS[]=new String[len+1];
+            arrayS[0]="Escolha";            
+            for(int i=1; i<len+1;i++)
+                arrayS[i]=list.get(i-1);            
+            box.setModel(new javax.swing.DefaultComboBoxModel<>(arrayS));
+        }
+        catch (Exception exception) {
+            System.out.println("Erro ao pegar os tipos de mercadorias");
+        } // end catch  
+        
+    }
+    public static String getChoosedComboBox(JComboBox box){
+        return (String) box.getModel().getSelectedItem(); 
+    }
     class PathConnection {
         Connection connection; // manages connection
         Statement statement;

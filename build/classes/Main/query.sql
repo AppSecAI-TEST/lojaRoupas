@@ -12,8 +12,8 @@ CREATE TABLE Transacao
 	Data_Transacao                       date  NULL ,
     Hora_Transacao                        time NULL ,
 	Descricao_Transacao                         char(255) NULL   ,
-		-- Descricao é criada automaticamente com os itens da venda e seus descontos
-		-- Escolher com muito cuidado o formato da Descricao para poder recuperar as informacoes		
+		-- Na venda: A descricao criada com os itens da venda e seus descontos
+		-- Na devolucao: A descricao é o ID_Mercadoria
 	ID_Caixa					     integer NULL, 
 	Cliente                          char(40)   NULL       ,
 		-- somente auxiliar, nao serve como chave de procura
@@ -117,9 +117,9 @@ INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("conjunto");
 INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("cinto");
 INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("arco");
 INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("biquini");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("calcinha e sutia");
+INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("calcinha e sutiã");
 INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("jaqueta");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("bebe");
+INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("bebê");
 INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("outros");
 -- insert into caixa(Status, Data_Abertura, Hora_Abertura, Adicionado, Retirado) Values ('aberto', '2017-07-28', '17:00:00', 20.3, 0);
 

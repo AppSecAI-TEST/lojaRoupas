@@ -47,7 +47,7 @@ public class PanelConsulta extends javax.swing.JPanel {
     }
     public void update(){
         String key = getKey();
-        key = Main.prepareToDB(key);
+        key = Main.prepareToSearch(key);
         resultsOfSearch(key); 
     }
     protected String getTableName(){
@@ -57,7 +57,7 @@ public class PanelConsulta extends javax.swing.JPanel {
         return procuraField.getText();
     }
     public void resultsOfSearch(String keyOfSearch){
-        keyOfSearch=Main.prepareToDB(keyOfSearch);
+        keyOfSearch=Main.prepareToSearch(keyOfSearch);
         String tableName=getTableName();
         String query;
         if(tableName.equals("Penduras"))
@@ -73,7 +73,7 @@ public class PanelConsulta extends javax.swing.JPanel {
             return;
         }
         try{
-            Set <Integer>columnsToSearch=new HashSet<Integer>();
+            Set <Integer>columnsToSearch=new HashSet();
             int columnOfSaldo=-1;
             ResultSetMetaData metaData = results.getMetaData();
             int numberOfColumns = metaData.getColumnCount();
@@ -91,10 +91,9 @@ public class PanelConsulta extends javax.swing.JPanel {
                 else
                 {
                     if(s.equals("ID_"+tableName)|| s.equals("Descricao_"+tableName) || s.equals("TipoMercadoria")||
-                        s.equals("Observacao")||s.equals("Nome_"+tableName)|| s.equals("CPF_"+tableName))
+                        s.equals("Observacao")||s.equals("Nome_"+tableName)|| s.equals("CPF_"+tableName) || s.equals("Status"))
                     columnsToSearch.add(i);
-                }
-                
+                }                
             }      
             tableConsulta.setModel(new DefaultTableModel(nameColumns,0)); 
             tableConsulta.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -102,8 +101,10 @@ public class PanelConsulta extends javax.swing.JPanel {
                 tableConsulta.getColumnModel().getColumn(i).setPreferredWidth(width);
             while (results.next()) {
                 String columns[]=new String[numberOfColumns];
+                String originalColumns[]=new String[numberOfColumns];
                 for (int i = 0; i < numberOfColumns; i++) {
-                    columns[i]=results.getString(i+1);
+                    originalColumns[i]=results.getString(i+1);
+                    columns[i]=Main.prepareToSearch(originalColumns[i]);
                 }
                 boolean encontrou=false;
                 if(tableName.equals("Penduras")){
@@ -123,7 +124,7 @@ public class PanelConsulta extends javax.swing.JPanel {
                 if(encontrou)
                 {
                     numCol++;
-                    lojaDB.addRow(columns, tableConsulta);
+                    lojaDB.addRow(originalColumns, tableConsulta);
                 }
             } 
         }
@@ -251,7 +252,7 @@ public class PanelConsulta extends javax.swing.JPanel {
     }//GEN-LAST:event_procuraFieldActionPerformed
 
     private void procuraFieldInputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_procuraFieldInputMethodTextChanged
-        // TODO add your handling code here:
+        Main.p("teste");
     }//GEN-LAST:event_procuraFieldInputMethodTextChanged
    
     // Variables declaration - do not modify//GEN-BEGIN:variables

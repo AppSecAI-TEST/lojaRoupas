@@ -1,11 +1,9 @@
 package Panels;
 
-import Main.JTabbedPaneFrame;
 import Main.Main;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import javax.swing.BoxLayout;
 import javax.swing.JOptionPane;
@@ -350,7 +348,6 @@ public class PanelVenda extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-    
     private void barCodeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barCodeFieldActionPerformed
         if(hasCodeInTable(barCodeField.getText())){
             JOptionPane.showMessageDialog(barCodeField, "Esse produto já foi registrado nessa venda!", "Aviso", JOptionPane.WARNING_MESSAGE);            
@@ -374,7 +371,6 @@ public class PanelVenda extends javax.swing.JPanel {
             productConfirmed(consulta.mercadoriaMap);            
         barCodeField.setText("");
     }//GEN-LAST:event_barCodeFieldActionPerformed
-
     private void horaFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_horaFieldActionPerformed
         concluirVendaButtonActionPerformed(null);
     }//GEN-LAST:event_horaFieldActionPerformed
@@ -390,7 +386,7 @@ public class PanelVenda extends javax.swing.JPanel {
             return;
         String data = dataField.getText();
         String hora = horaField.getText();
-        String client = Main.prepareToDB(clientField.getText());
+        String client = clientField.getText();
         if(Main.isDateValid(data)==false || Main.isTimeValid(hora)==false){
             JOptionPane.showMessageDialog(concluirVendaButton, "Data ou hora inválida!", "Aviso", JOptionPane.WARNING_MESSAGE);            
             return;
@@ -495,8 +491,7 @@ public class PanelVenda extends javax.swing.JPanel {
     class ConsultaMercadoria{
         String confirmMessage;
         HashMap <String, String> mercadoriaMap;
-    }
-    
+    }    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField barCodeField;
     private javax.swing.JTextField clientField;

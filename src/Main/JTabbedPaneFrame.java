@@ -75,11 +75,12 @@ public class JTabbedPaneFrame extends JFrame {
     public String getTabName(){
         return tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
     }
-    public void setDataHoraPanelVenda() {
-        if (panelVenda == null) {
-            return;
-        }
-        panelVenda.setDataHoraPanelVenda();
+    public void setDataHoraPanels() {
+        if (panelVenda != null) 
+            panelVenda.setDataHoraPanelVenda();
+        if(panelDevolucao !=null)
+            panelDevolucao.setDataHoraPanelDevol();
+        
     }
 
     private void setCaixaAberto(boolean flag) {

@@ -25,13 +25,13 @@
                   <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="tamField" min="-2" pref="200" max="-2" attributes="0"/>
                   <Component id="precoField" min="-2" pref="200" max="-2" attributes="0"/>
+                  <Component id="tamField" min="-2" pref="200" max="-2" attributes="0"/>
                   <Component id="estimativaBox" min="-2" pref="200" max="-2" attributes="0"/>
                   <Component id="descField" min="-2" pref="200" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
@@ -65,13 +65,13 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="estimativaBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="precoField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="precoField" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="estimativaBox" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -88,7 +88,7 @@
                   <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="statusBox" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="56" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -96,7 +96,7 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Pre&#xe7;o: "/>
+        <Property name="text" type="java.lang.String" value="Pre&#xe7;o*: "/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
@@ -116,7 +116,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Tipo Mercadoria: "/>
+        <Property name="text" type="java.lang.String" value="Tipo Mercadoria*: "/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="precoField">
@@ -177,8 +177,8 @@
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="2">
-            <StringItem index="0" value="No Estoque"/>
-            <StringItem index="1" value="Encomendado"/>
+            <StringItem index="0" value="no estoque"/>
+            <StringItem index="1" value="encomendado"/>
           </StringArray>
         </Property>
       </Properties>
@@ -188,14 +188,14 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Descricao: "/>
+        <Property name="text" type="java.lang.String" value="Descricao*: "/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="descField">
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel8">
       <Properties>
-        <Property name="text" type="java.lang.String" value="C&#xf3;digo de barras: "/>
+        <Property name="text" type="java.lang.String" value="C&#xf3;digo de barras*: "/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="barCodeField">

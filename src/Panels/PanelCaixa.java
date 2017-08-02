@@ -6,7 +6,6 @@
 package Panels;
 
 import Main.Main;
-import java.text.DecimalFormat;
 import javax.swing.BoxLayout;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -56,7 +55,7 @@ public class PanelCaixa extends javax.swing.JPanel {
         retiradoLabel.setText(lojaDB.caixaMap.get("Retirado"));  
         idCaixaLabel.setText(lojaDB.caixaMap.get("ID_Caixa")); 
         vendasDevLabel.setText(Main.twoDig(valueVendasDev));
-        lojaDB.setDataHoraPanelVenda();
+        lojaDB.setDataHoraPanels();
     }
     private void createTable(String[] columnNames){
         DefaultTableModel model;      

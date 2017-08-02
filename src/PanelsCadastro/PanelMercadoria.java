@@ -7,29 +7,21 @@ package PanelsCadastro;
 
 import Main.Main;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Soraya
  */
 public class PanelMercadoria extends javax.swing.JPanel {
     Main lojaDB;
-    /**
-     * Creates new form PanelMercadoria
-     */
     public PanelMercadoria(Main lojaDB) {
         this.lojaDB=lojaDB;
         initComponents();
-        setTipoMercadoriaBox();
+        lojaDB.setComboBox("TipoMercadoria", "Descricao_TipoMercadoria", tipoMercadoriaBox);
     }
     public void insertMercadoria(){
-        if(isValidEntry()==false){
-            System.out.println("Entrada inválida");
+        if(isValidEntry()==false)
             return;
-        }
         System.out.println("Entrada válida");
         String n=barCodeField.getText();
         String m=tipoMercadoriaBox.getSelectedItem().toString();
@@ -44,13 +36,16 @@ public class PanelMercadoria extends javax.swing.JPanel {
         String query = "INSERT INTO Mercadoria(ID_Mercadoria, Descricao_Mercadoria, Observacao, TipoMercadoria, Tamanho, Tamanho_est, Status, Preco_Merc)"+
         " VALUES (\'"+n+"\',\'"+d+"\', \'"+obs+"\', \'"+m+"\', \'"+tam+"\', \'"+e+"\',\'"+status+"\',"+preco+")";
         lojaDB.executeQuery(query);
-        limparCampos();    
+        limparCampos();   
+        JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);                     
     }
     void limparCampos(){
         descField.setText("");
         tamField.setText("");
         precoField.setText("");
         obsField.setText("");
+        tipoMercadoriaBox.setSelectedIndex(0);
+        estimativaBox.setSelectedIndex(0);                
     }
     boolean isValidEntry(){
         String n=barCodeField.getText();
@@ -59,26 +54,33 @@ public class PanelMercadoria extends javax.swing.JPanel {
         boolean hasEntry=false;
         try{
             if(results.next()){
-                System.out.println("Uma mercadoria já possui esse código");
+                JOptionPane.showMessageDialog(null, "Esse código de barras já foi cadastrado", "Aviso", JOptionPane.WARNING_MESSAGE);                     
                 hasEntry=true;
             }
         }catch(Exception e){}
         if(hasEntry)
             return false;       
         String d=descField.getText();
-        if(d.equals(""))
+        if(d.equals("")){
+            JOptionPane.showMessageDialog(null, "A descrição não pode estar vazia", "Aviso", JOptionPane.WARNING_MESSAGE);
             return false;
+        }
         String m=tipoMercadoriaBox.getSelectedItem().toString();
         String e=estimativaBox.getSelectedItem().toString();
-        if(m.equals("Escolha o tipo"))
+        if(m.equals("Escolha o tipo")){
+            JOptionPane.showMessageDialog(null, "Escolha o tipo de mercadoria", "Aviso", JOptionPane.WARNING_MESSAGE);
             return false;
+        }
         String tam=tamField.getText();
         try{
             Integer.parseInt(tam);
         }
         catch(Exception ex){
-            if(tam.equals("")==false)
+            if(tam.equals("")==false){
+                JOptionPane.showMessageDialog(null, "O tamanho não pode conter letras", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return false;
+            }
+                
         }        
         String preco=precoField.getText();
         preco=preco.replace(",", ".");
@@ -86,45 +88,10 @@ public class PanelMercadoria extends javax.swing.JPanel {
             Double.parseDouble(preco);
         }
         catch(Exception ex){
+            JOptionPane.showMessageDialog(null, "Preencha o preço corretamente", "Aviso", JOptionPane.WARNING_MESSAGE);
             return false;
         }
         return true;        
-    }
-    public void setTipoMercadoriaBox(){
-        String query="SELECT * From TipoMercadoria";
-        ResultSet results = lojaDB.executeQuery(query);
-        int numberOfColumns=-1, columnOfDescricao=-1;
-        LinkedList <String> tipoMercadoriasList =new LinkedList(); 
-        String s;
-        if(results==null)
-        {
-            System.out.println("Nenhum resultado da busca foi encontrado.");
-            return;
-        }
-        try{
-            ResultSetMetaData metaData = results.getMetaData();
-            numberOfColumns = metaData.getColumnCount();
-            columnOfDescricao=-1;
-            
-            for (int i = 0; i < numberOfColumns; i++) {
-                s=metaData.getColumnName(i+1);   
-                if(s.equals("Descricao_TipoMercadoria"))
-                    columnOfDescricao = i;               
-            } 
-            for (int i=0;results.next();i++) {                
-                tipoMercadoriasList.add(results.getString(columnOfDescricao+1));
-            }
-            int len=tipoMercadoriasList.size();
-            String tipoMercadorias[]=new String[len+1];
-            tipoMercadorias[0]="Escolha o tipo";            
-            for(int i=1; i<len+1;i++) tipoMercadorias[i]=tipoMercadoriasList.get(i-1);
-            //System.out.print(tipoMercadorias[0]);
-            tipoMercadoriaBox.setModel(new javax.swing.DefaultComboBoxModel<>(tipoMercadorias));
-        }
-        catch (Exception exception) {
-            System.out.println("Erro ao pegar os tipos de mercadorias");
-        } // end catch  
-        
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -152,7 +119,7 @@ public class PanelMercadoria extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         barCodeField = new javax.swing.JTextField();
 
-        jLabel3.setText("Preço: ");
+        jLabel3.setText("Preço*: ");
 
         jLabel4.setText("Observação: ");
 
@@ -160,7 +127,7 @@ public class PanelMercadoria extends javax.swing.JPanel {
 
         jLabel7.setText("Estimativa tamanho: ");
 
-        jLabel1.setText("Tipo Mercadoria: ");
+        jLabel1.setText("Tipo Mercadoria*: ");
 
         precoField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -186,11 +153,11 @@ public class PanelMercadoria extends javax.swing.JPanel {
 
         estimativaBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-", "PPP", "PP", "P", "M", "G", "GG", "GGG" }));
 
-        statusBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "No Estoque", "Encomendado" }));
+        statusBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "no estoque", "encomendado" }));
 
-        jLabel6.setText("Descricao: ");
+        jLabel6.setText("Descricao*: ");
 
-        jLabel8.setText("Código de barras: ");
+        jLabel8.setText("Código de barras*: ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -205,12 +172,12 @@ public class PanelMercadoria extends javax.swing.JPanel {
                     .addComponent(jLabel8)
                     .addComponent(jLabel6)
                     .addComponent(jLabel7)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
                 .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tamField, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(precoField, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tamField, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(estimativaBox, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(descField, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -237,12 +204,12 @@ public class PanelMercadoria extends javax.swing.JPanel {
                     .addComponent(descField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(estimativaBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(precoField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(estimativaBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -255,7 +222,7 @@ public class PanelMercadoria extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(statusBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(53, 53, 53))
+                .addGap(56, 56, 56))
         );
     }// </editor-fold>//GEN-END:initComponents
 

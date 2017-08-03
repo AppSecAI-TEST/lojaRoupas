@@ -19,20 +19,26 @@ import javax.swing.table.DefaultTableModel;
 public class Main {
     // JDBC driver name and database URL 
     PathConnection pathConnection;
-    JTabbedPaneFrame tabbedPane;    
+    JTabbedPaneFrame tabbedFrame;    
     public boolean caixaAberto;
     static DecimalFormat t=new DecimalFormat("0.00");
     public HashMap<String,String> caixaMap=new HashMap();
     Main() {        
         System.out.print(Main.isTimeValid("2:24:30"));
         pathConnection = getPathConnection("CriancaBonitaDB");
-        tabbedPane = new JTabbedPaneFrame(this);
-        tabbedPane.setVisible(true);
-        tabbedPane.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        tabbedPane.setSize(700,700);
+        tabbedFrame = new JTabbedPaneFrame(this);
+        tabbedFrame.setVisible(true);
+        tabbedFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        tabbedFrame.setSize(700,700);
         // connect to database books and query database 
-        while(tabbedPane.isEnabled()){}       
+        while(tabbedFrame.isEnabled()){}       
         close_connection(pathConnection.connection, pathConnection.statement);        
+    }
+    public void setTabbedPaneVisible(boolean flag){
+        tabbedFrame.setVisible(flag);
+    }
+    public void setConfirmaVendaPanelVisible(boolean flag){
+        tabbedFrame.setConfirmaVendaPanelVisible(flag);
     }
     public static boolean isDateValid(String date) 
     {        
@@ -70,8 +76,7 @@ public class Main {
         catch(Exception e){return false;}
         return true;
     }
-    public static double formatDoubleString(String doubleS) 
-    {        
+    public static double formatDoubleString(String doubleS){        
         doubleS=doubleS.trim();
         doubleS=doubleS.replace(",", ".");
         return Double.parseDouble(doubleS); 
@@ -99,13 +104,13 @@ public class Main {
         return true;
     }
     public void setDataHoraPanels(){
-        if(tabbedPane==null)
+        if(tabbedFrame==null)
             return;
-        tabbedPane.setDataHoraPanels();
+        tabbedFrame.setDataHoraPanels();
     }
     public void setBooleanCaixaAberto(){
-        if(tabbedPane!=null)
-            tabbedPane.setBooleanCaixaAberto();
+        if(tabbedFrame!=null)
+            tabbedFrame.setBooleanCaixaAberto();
     }
     void printResults(ResultSet results){
         if(results==null)
@@ -206,7 +211,7 @@ public class Main {
             return null;
         } catch (Exception exception) {
             System.out.println("Erro na execução do query: "+query);   
-            System.out.println(exception.toString());
+            exception.printStackTrace();
             return null;
         } // end catch
     }
@@ -309,14 +314,17 @@ public class Main {
     }
     public static String SqlDateToNormalFormat(String dataInSqlFormat){
         String[] separated=dataInSqlFormat.split("-");
-        return  separated[2]+"/"+separated[1]+"/"+separated[0];
+        try{
+            return  separated[2]+"/"+separated[1]+"/"+separated[0];
+        }catch(Exception e){
+            return "";
+        }
     }
     public void updateTable(JTable table, JPanel tablePanel, String tableName, boolean flagSelect, ResultSet results){
         if(flagSelect==false)            
             results =executeQuery("SELECT * FROM "+ tableName);
         int width=100;
-        if(results==null)
-        {
+        if(results==null){
             System.out.println("Erro ao imprimir os dados, o query não foi executado corretamente.");
             return;
         }
@@ -327,6 +335,7 @@ public class Main {
             String nameColumns[]=new String[numberOfColumns];      
             for (int i = 0; i < numberOfColumns; i++) {
                 nameColumns[i]=metaData.getColumnName(i+1);
+                nameColumns[i] = Main.getOff_NameTable(nameColumns[i], tableName);
             }            
             table.setModel(new DefaultTableModel(nameColumns,0)); 
             table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -346,6 +355,19 @@ public class Main {
         } // end catch 
         int numCol=table.getColumnCount();
         tablePanel.setPreferredSize(new Dimension(numCol*width,300));
+    }
+    public static String getOff_NameTable(String nameCol, String nameTable){
+        if(nameCol.contains("_"+nameTable)){
+            int len = nameCol.length();
+            nameCol=nameCol.substring(0, len - nameTable.length()-1);
+        }
+        return nameCol;
+    }
+    public static String[] getOff_NameTable(String[] nameCol, String nameTable){
+        int len = nameCol.length;
+        for(int i=0;i<len;i++)
+            nameCol[i]=getOff_NameTable(nameCol[i], nameTable); 
+        return nameCol;
     }
     public void setComboBox(String tableName, String columnName, JComboBox box){
         String query="SELECT * From "+tableName;
@@ -386,6 +408,33 @@ public class Main {
     public static String getChoosedComboBox(JComboBox box){
         return (String) box.getModel().getSelectedItem(); 
     }
+    
+    public String getColumnWithColumnKey(String tableName, String nameColumnKey, String columnKey, String nameColumn ){        
+        //  CUIDADO COM O columnKey,ELE DEVE SER nameColumn com aspas caso seja do tipo String        
+        String query = "Select "+nameColumn+" from "+tableName+" where "+nameColumnKey+"= "+columnKey;
+        ResultSet results = executeQuery(query);
+        
+        if(results==null){
+            System.out.println("Nenhum resultado da busca foi encontrado.");
+            System.out.println("Query: "+query);
+            return null;
+        }
+        try{            
+            if(results.next())
+                return results.getString(1);       
+            else
+                return null;
+        }
+        catch (Exception exception) {
+            System.out.println("Erro ao pegar ao consultar a coluna");
+            exception.printStackTrace();
+            return null;
+        } // end catch        
+    }
+    public String getColumnWithPrimaryKey(String tableName, String primaryKey, String nameColumn){
+        return getColumnWithColumnKey(tableName, "ID_"+tableName, primaryKey, nameColumn);        
+    }
+    
     class PathConnection {
         Connection connection; // manages connection
         Statement statement;

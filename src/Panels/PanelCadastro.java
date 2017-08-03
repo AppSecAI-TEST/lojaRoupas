@@ -11,6 +11,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import Main.Main;
 import PanelsCadastro.*;
+import auxPanels.ConfirmaVendaPanel;
 import java.sql.ResultSet;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -20,9 +21,7 @@ import javax.swing.JTextField;
  */
 public class PanelCadastro extends javax.swing.JPanel {
 
-    /**
-     * Creates new form PanelCadastro
-     */
+    PanelDevolucao panelDev;    
     JTable tableCadastro = new JTable();
     Main lojaDB;
     JTextField []queryTextField;
@@ -32,6 +31,7 @@ public class PanelCadastro extends javax.swing.JPanel {
     PanelMercadoria panelMercadoria;
     PanelCliente_Fornecedor panelCliente, panelFornecedor;
     PanelUsuario panelUsuario;
+    ConfirmaVendaPanel panelConfirmaVenda;
     public PanelCadastro(Main lojaDB) {
         initComponents();        
         this.lojaDB=lojaDB;
@@ -134,7 +134,7 @@ public class PanelCadastro extends javax.swing.JPanel {
                 .addGap(22, 22, 22))
         );
     }// </editor-fold>//GEN-END:initComponents
-    public void update(){
+    public void update(){        
         lojaDB.updateTable(tableCadastro, tableCadastroPanel, getTableName(), false, null);
     }
     private void tabbedPaneCadastroStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPaneCadastroStateChanged
@@ -142,9 +142,10 @@ public class PanelCadastro extends javax.swing.JPanel {
     }//GEN-LAST:event_tabbedPaneCadastroStateChanged
 
     private void inserirButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
+        String nameClient=null;
         switch(getTableName()){
             case "Cliente":
-                panelCliente.insertCliente_Fornecedor("Cliente");
+                nameClient = panelCliente.insertCliente_Fornecedor("Cliente");
                 break;
             case "Mercadoria":
                 panelMercadoria.insertMercadoria();
@@ -155,15 +156,58 @@ public class PanelCadastro extends javax.swing.JPanel {
             case "Usuario":
                 panelUsuario.insertUsuario();
                 break;
-            default:
-                
-                break;
-                
+            default:                
+                break;                
         }
         update();
+        if(nameClient!=null){
+            if(panelDev!=null)
+                panelDev.returnVisible(nameClient);
+            if(panelConfirmaVenda!=null)
+                panelConfirmaVenda.returnVisible(nameClient);
+        }
+                
     }
-
-
+    public PanelCadastro(Main lojaDB, PanelDevolucao panelDev){
+        initComponents();        
+        this.lojaDB=lojaDB;
+        createTable(new String[]{"ID do Caixa","Tipo de Transacao", "ID da transacao", "Descricao", "Valor total"}); 
+        JScrollPane scrollTable=new JScrollPane(tableCadastro);
+        tableCadastroPanel.removeAll();
+        tableCadastroPanel.add(scrollTable); 
+        panelCliente = new PanelCliente_Fornecedor(lojaDB); 
+        tabbedPaneCadastro.addTab( "Cliente", null, panelCliente, "Cliente" );
+        panelMercadoria = new PanelMercadoria(lojaDB);         
+        tabbedPaneCadastro.addTab( "Mercadoria", null, panelMercadoria, "Mercadoria" );        
+        panelFornecedor = new PanelCliente_Fornecedor(lojaDB); 
+        tabbedPaneCadastro.addTab( "Fornecedor", null, panelFornecedor, "Fornecedor" ); 
+        panelUsuario = new PanelUsuario(lojaDB); 
+        tabbedPaneCadastro.addTab( "Usuário", null, panelUsuario, "Usuário" );              
+        tableCadastro.setDefaultEditor(Object.class, null);
+        //-----------------------------------------------------------------------------------
+        this.panelDev=panelDev;        
+        tabbedPaneCadastro.setEnabled(false);
+    }
+    public PanelCadastro(Main lojaDB, ConfirmaVendaPanel panelConfirmaVenda){
+        initComponents();        
+        this.lojaDB=lojaDB;
+        createTable(new String[]{"ID do Caixa","Tipo de Transacao", "ID da transacao", "Descricao", "Valor total"}); 
+        JScrollPane scrollTable=new JScrollPane(tableCadastro);
+        tableCadastroPanel.removeAll();
+        tableCadastroPanel.add(scrollTable); 
+        panelCliente = new PanelCliente_Fornecedor(lojaDB); 
+        tabbedPaneCadastro.addTab( "Cliente", null, panelCliente, "Cliente" );
+        panelMercadoria = new PanelMercadoria(lojaDB);         
+        tabbedPaneCadastro.addTab( "Mercadoria", null, panelMercadoria, "Mercadoria" );        
+        panelFornecedor = new PanelCliente_Fornecedor(lojaDB); 
+        tabbedPaneCadastro.addTab( "Fornecedor", null, panelFornecedor, "Fornecedor" ); 
+        panelUsuario = new PanelUsuario(lojaDB); 
+        tabbedPaneCadastro.addTab( "Usuário", null, panelUsuario, "Usuário" );              
+        tableCadastro.setDefaultEditor(Object.class, null);
+        //-----------------------------------------------------------------------------------
+        this.panelConfirmaVenda=panelConfirmaVenda;        
+        tabbedPaneCadastro.setEnabled(false);
+    }
        
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton inserirButton;

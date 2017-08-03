@@ -3,12 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Andre%20Simao/Documents/NetBeansProjects/LojaRoupas/src/PanelsCadastro/PanelUsuario.java</file>
-            <file>file:/C:/Users/Andre%20Simao/Documents/NetBeansProjects/LojaRoupas/src/Panels/PanelConsulta.java</file>
-            <file>file:/C:/Users/Andre%20Simao/Documents/NetBeansProjects/LojaRoupas/src/Main/JTabbedPaneFrame.java</file>
-            <file>file:/C:/Users/Andre%20Simao/Documents/NetBeansProjects/LojaRoupas/src/Panels/PanelDevolucao.java</file>
-            <file>file:/C:/Users/Andre%20Simao/Documents/NetBeansProjects/LojaRoupas/src/PanelsCadastro/PanelMercadoria.java</file>
-            <file>file:/C:/Users/Andre%20Simao/Documents/NetBeansProjects/LojaRoupas/src/PanelsCadastro/PanelCliente_Fornecedor.java</file>
+            <file>file:/C:/Users/Andre%20Simao/Documents/NetBeansProjects/LojaRoupas/src/auxPanels/ConfirmaVendaPanel.java</file>
+            <file>file:/C:/Users/Andre%20Simao/Documents/NetBeansProjects/LojaRoupas/src/Main/Main.java</file>
+            <file>file:/C:/Users/Andre%20Simao/Documents/NetBeansProjects/LojaRoupas/src/Panels/PanelVenda.java</file>
         </group>
     </open-files>
 </project-private>

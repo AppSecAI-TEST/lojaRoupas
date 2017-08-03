@@ -6,18 +6,26 @@ CREATE TABLE Transacao
 	-- Venda, devolucao ou caixa
 ( 
 	ID_Transacao                         integer  NOT NULL AUTO_INCREMENT,
-	TipoDeTransacao                  char(40) NOT NULL,
+	Vendedor						   char(40) NULL,
+	Tipo_de_Transacao                  char(40) NOT NULL,
 		-- venda , devolucao, caixa
-	Valor_Total                      decimal(6,2)  NOT NULL ,
+	Valor_em_Dinheiro                      decimal(6,2)  NOT NULL ,
+	Valor_em_Cartao                  decimal(6,2)  NULL,
+	Valor_com_SaldoCliente           decimal(6,2)  NULL,
+		-- positivo: fiado    negativo: crédito por compras futuras
 	Data_Transacao                       date  NULL ,
     Hora_Transacao                        time NULL ,
 	Descricao_Transacao                         char(255) NULL   ,
 		-- Na venda: A descricao criada com os itens da venda e seus descontos
-		-- Na devolucao: A descricao é o ID_Mercadoria
+		###tipo###
+		-- Na devolucao: A descricao é o ID_Mercadoria ou vazia/null se for produto não cadastrado
+		-- Na caixa: "retirada do caixa"  "adição ao caixa"
 	ID_Caixa					     integer NULL, 
 	Cliente                          char(40)   NULL       ,
 		-- somente auxiliar, nao serve como chave de procura
 	Observacao                      char(255)  NULL,
+		-- na devolução, corresponde ao motivo
+		-- na venda, corresponde ao desconto e outras coisas a serem adicionadas		
 	PRIMARY KEY (ID_Transacao)
 )
 ;

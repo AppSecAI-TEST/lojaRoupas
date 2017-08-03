@@ -95,7 +95,10 @@ public class PanelConsulta extends javax.swing.JPanel {
                     columnsToSearch.add(i);
                 }                
             }      
-            tableConsulta.setModel(new DefaultTableModel(nameColumns,0)); 
+            if(tableName.equals("Penduras"))
+                tableConsulta.setModel(new DefaultTableModel(Main.getOff_NameTable(nameColumns, "Cliente"),0)); 
+            else
+                tableConsulta.setModel(new DefaultTableModel(Main.getOff_NameTable(nameColumns, tableName),0)); 
             tableConsulta.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
             for(int i=0;i<tableConsulta.getColumnCount();i++)
                 tableConsulta.getColumnModel().getColumn(i).setPreferredWidth(width);

@@ -1,27 +1,30 @@
 package Panels;
 
 import Main.Main;
+import auxPanels.ConfirmaVendaPanel;
+import auxPanels.MyFrame;
+import java.awt.Dimension;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.HashMap;
 import javax.swing.BoxLayout;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author Soraya
- */
 public class PanelVenda extends javax.swing.JPanel {
 
     /**
      * Creates new form Panel_Venda
      */    
     JTable tableVenda;
-    Main lojaDB;
+    Main lojaDB;    
+    MyFrame frameConfirma;
     public PanelVenda(Main lojaDB) {
         this.lojaDB=lojaDB;
         initComponents();          
@@ -31,6 +34,10 @@ public class PanelVenda extends javax.swing.JPanel {
         tableVendasPanel.add(scrollTable);         
         tableVenda.addMouseListener(new PopClickListener(this));
 
+    }
+    public void setConfirmaVendaPanelVisible(boolean flag){
+        if(frameConfirma!=null)
+            frameConfirma.setVisible(flag);
     }
     public void removeEvent(MouseEvent evt){
         int row = tableVenda.rowAtPoint(evt.getPoint());
@@ -123,7 +130,7 @@ public class PanelVenda extends javax.swing.JPanel {
         String descricao=mapProduct.get("Descrição");
         String est=mapProduct.get("Estimativa do tamanho");
         String prec=mapProduct.get("Preço");
-        String[] row=new String[]{cod, tip, descricao, est, "0",  prec};
+        String[] row=new String[]{cod, tip, descricao, est, "0.00",  prec};
         lojaDB.addRow(row, tableVenda);
         updateResultLabels(0, Double.parseDouble(prec), "add");
     }
@@ -179,6 +186,8 @@ public class PanelVenda extends javax.swing.JPanel {
                 return "Estimativa do tamanho";
             case "Preco_Merc":
                 return "Preço";
+            case "Status":
+                return "Status";
             default:
                 return null;
         }
@@ -187,8 +196,8 @@ public class PanelVenda extends javax.swing.JPanel {
         setDataHoraPanelVenda();
     }
     public void setDataHoraPanelVenda(){
-        if(Main.isEmpty(dataField.getText()))
-            dataField.setText(Main.SqlDateToNormalFormat(lojaDB.getOfCaixa("Data_Abertura")));
+//        if(Main.isEmpty(dataField.getText()))
+//            dataField.setText(Main.SqlDateToNormalFormat(lojaDB.getOfCaixa("Data_Abertura")));
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -210,12 +219,6 @@ public class PanelVenda extends javax.swing.JPanel {
         discountLabel = new javax.swing.JLabel();
         totalLabel = new javax.swing.JLabel();
         statusCaixaLabel = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        dataField = new javax.swing.JTextField();
-        horaField = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        clientField = new javax.swing.JTextField();
 
         jLabel2.setText("Código de barras: ");
 
@@ -233,7 +236,7 @@ public class PanelVenda extends javax.swing.JPanel {
         );
         tableVendasPanelLayout.setVerticalGroup(
             tableVendasPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 170, Short.MAX_VALUE)
+            .addGap(0, 222, Short.MAX_VALUE)
         );
 
         jLabel1.setText("Subtotal: ");
@@ -242,7 +245,7 @@ public class PanelVenda extends javax.swing.JPanel {
 
         jLabel4.setText("Total: ");
 
-        concluirVendaButton.setText("Concluir Venda  ");
+        concluirVendaButton.setText("Finalizar Venda  ");
         concluirVendaButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 concluirVendaButtonActionPerformed(evt);
@@ -257,20 +260,6 @@ public class PanelVenda extends javax.swing.JPanel {
 
         statusCaixaLabel.setText("Status Caixa");
 
-        jLabel5.setText("Data: ");
-
-        horaField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                horaFieldActionPerformed(evt);
-            }
-        });
-
-        jLabel7.setText("Cliente: ");
-
-        jLabel8.setText("Hora: ");
-
-        clientField.setText(" ");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -284,20 +273,8 @@ public class PanelVenda extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(barCodeField, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(9, 9, 9)
-                                .addComponent(concluirVendaButton))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel7))
-                                .addGap(6, 6, 6)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(clientField)
-                                    .addComponent(dataField)
-                                    .addComponent(horaField))))
+                        .addGap(9, 9, 9)
+                        .addComponent(concluirVendaButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -324,28 +301,20 @@ public class PanelVenda extends javax.swing.JPanel {
                 .addComponent(statusCaixaLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tableVendasPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(clientField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(subTotalLabel)
-                    .addComponent(jLabel5)
-                    .addComponent(dataField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(subTotalLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(discountLabel)
-                    .addComponent(horaField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
+                    .addComponent(discountLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(totalLabel)
                     .addComponent(concluirVendaButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     private void barCodeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barCodeFieldActionPerformed
@@ -353,15 +322,28 @@ public class PanelVenda extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(barCodeField, "Esse produto já foi registrado nessa venda!", "Aviso", JOptionPane.WARNING_MESSAGE);            
             barCodeField.setText("");
             return;
-        }
+        }       
         ConsultaMercadoria consulta = getConfirmMessage(barCodeField.getText());
         if(consulta==null){
             JOptionPane.showMessageDialog(barCodeField, "Não há produto registrado com esse código!", "Aviso", JOptionPane.WARNING_MESSAGE);            
             barCodeField.setText("");
             return;
         }
-        String message= consulta.confirmMessage; 
+        String status = consulta.mercadoriaMap.get("Status");        
         Object[] options = { "Confirmar", "Não confirma" };
+        if(status.equals("no estoque")==false){
+            String message1="O produto está registrado como \'"+status+"\' , "
+                    + "confirmar ele na venda mesmo assim?";
+            int reply1 = JOptionPane.showOptionDialog(null, message1, "Produto com status inválido",
+                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+            //0 - confirm      1 - nao confirma
+            if(reply1==1){
+                System.out.println("Mercadoria não confirmada");
+                barCodeField.setText("");
+                return;
+            }                     
+        }
+        String message= consulta.confirmMessage; 
         int reply = JOptionPane.showOptionDialog(null, message, "Conferência de Produto",
             JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
         //0 - confirm      1 - nao confirma
@@ -371,9 +353,6 @@ public class PanelVenda extends javax.swing.JPanel {
             productConfirmed(consulta.mercadoriaMap);            
         barCodeField.setText("");
     }//GEN-LAST:event_barCodeFieldActionPerformed
-    private void horaFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_horaFieldActionPerformed
-        concluirVendaButtonActionPerformed(null);
-    }//GEN-LAST:event_horaFieldActionPerformed
     private boolean hasCodeInTable(String code){
         int len = tableVenda.getRowCount();
         for(int i=0;i<len;i++)
@@ -384,24 +363,35 @@ public class PanelVenda extends javax.swing.JPanel {
     private void concluirVendaButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                    
         if(isValidSitution()==false)            
             return;
-        String data = dataField.getText();
-        String hora = horaField.getText();
-        String client = clientField.getText();
-        if(Main.isDateValid(data)==false || Main.isTimeValid(hora)==false){
-            JOptionPane.showMessageDialog(concluirVendaButton, "Data ou hora inválida!", "Aviso", JOptionPane.WARNING_MESSAGE);            
-            return;
-        }
-        data = Main.formatStringToSql("Date", data);
-        hora = Main.formatStringToSql("Time", hora);
         int answ = JOptionPane.showConfirmDialog(concluirVendaButton, "Tem certeza que deseja concluir a venda?", "Tela de confirmação", JOptionPane.OK_CANCEL_OPTION);
-            if(answ!=0)
-                return;            
+        if(answ!=0)
+            return; 
+        String descricaoVenda = mountDescricaoVenda();        
+        ConfirmaVendaPanel confirmaVendaPanel = new ConfirmaVendaPanel(lojaDB, this, descricaoVenda);        
+        lojaDB.setConfirmaVendaPanelVisible(false);
+        lojaDB.setTabbedPaneVisible(false);
+        frameConfirma = new MyFrame();
+        frameConfirma.add(confirmaVendaPanel);
+        frameConfirma.setVisible(true);
+        frameConfirma.setSize(new Dimension(500, 700));
+        frameConfirma.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frameConfirma.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                lojaDB.setTabbedPaneVisible(true);
+                frameConfirma.exitProcedure();
+            }
+        });
+                        
+        
+    }
+    public String mountDescricaoVenda(){
         int len = tableVenda.getRowCount();
         double subTotalValue=0;
         double totalDiscount=0;
         String descricao="venda###";
         for(int i=0;i<len;i++){
-            descricao+=elemOfTable(i, 0)+"#";
+            descricao+=elemOfTable(i, 0)+"#";            
             descricao+=elemOfTable(i, 1)+"#";
             descricao+=elemOfTable(i, 2)+"#";
             descricao+=elemOfTable(i, 3)+"#";
@@ -417,27 +407,20 @@ public class PanelVenda extends javax.swing.JPanel {
         descricao+=subTotalValueSt+"###";
         descricao+=totalDiscountSt+"###";
         descricao+=totalValueSt;
-        
-        String query;
-        if(totalDiscount>0)
-            query = "INSERT into Transacao(TipoDeTransacao, Valor_Total, Data_Transacao, Hora_Transacao, "
-                + "Descricao_Transacao, ID_Caixa, Observacao, Cliente) VALUES ("
-                    + "\"venda\","+ totalValueSt+","+data+","+hora+",\""+
-                    descricao+"\","+lojaDB.getOfCaixa("ID_Caixa")+",\"Desconto: "+totalDiscountSt
-                    + "\",\""+client+"\")";
-        else
-            query = "INSERT into Transacao(TipoDeTransacao, Valor_Total, Data_Transacao, Hora_Transacao, "
-                + "Descricao_Transacao, ID_Caixa, Cliente) VALUES ("
-                    + "\"venda\","+ totalValueSt+","+data+","+hora+",\""+
-                    descricao+"\","+lojaDB.getOfCaixa("ID_Caixa")+ ",\""+client +"\")";
-        lojaDB.executeQuery(query);
-        JOptionPane.showMessageDialog(concluirVendaButton, "Venda realizada com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);            
-        clean();    
+        return descricao;
     }
+    public void returnVisible(){
+        lojaDB.setTabbedPaneVisible(true);
+        frameConfirma.setEnabled(false);
+        frameConfirma.dispose();        
+        JOptionPane.showMessageDialog(concluirVendaButton, "Venda realizada com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);            //        
+        clean();  
+    }
+    
     private void clean(){
         Main.cleanTable(tableVenda);
-        horaField.setText("");
-        clientField.setText("");
+//        horaField.setText("");
+//        clientField.setText("");
         subTotalLabel.setText("0");
         totalLabel.setText("0");
         this.discountLabel.setText("0");
@@ -494,18 +477,12 @@ public class PanelVenda extends javax.swing.JPanel {
     }    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField barCodeField;
-    private javax.swing.JTextField clientField;
     private javax.swing.JButton concluirVendaButton;
-    private javax.swing.JTextField dataField;
     private javax.swing.JLabel discountLabel;
-    private javax.swing.JTextField horaField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel statusCaixaLabel;
     private javax.swing.JLabel subTotalLabel;
     private javax.swing.JPanel tableVendasPanel;

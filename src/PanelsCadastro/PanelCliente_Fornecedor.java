@@ -159,9 +159,9 @@ public class PanelCliente_Fornecedor extends javax.swing.JPanel {
     private void fixoFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixoFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_fixoFieldActionPerformed
-    public void insertCliente_Fornecedor(String nameTable){
+    public String insertCliente_Fornecedor(String nameTable){
         if(isValidEntry()==false)
-            return;
+            return null;
         String n=nomeField.getText();
         String cpf=cpfField.getText();
         if(Main.isEmpty(cpf))
@@ -180,7 +180,8 @@ public class PanelCliente_Fornecedor extends javax.swing.JPanel {
             query = "INSERT INTO Fornecedor(Nome_Fornecedor, Telefone_Celular1, Telefone_Celular2, Telefone_Fixo, Endereco_Fornecedor, Email_Fornecedor, CPF_Fornecedor, Descricao_Fornecedor)"+
         " VALUES (\'"+n+"\', \'"+cel1+"\', \'"+cel2+"\', \'"+fixo+"\', \'"+end+"\',\'"+email+"\',"+cpf+",\'"+desc+"\')";
         lojaDB.executeQuery(query);
-        JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);                     
+        JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);
+        return n;
     }
     boolean isValidEntry(){
         String n=nomeField.getText();

@@ -24,7 +24,7 @@ public class JTabbedPaneFrame extends JFrame {
     Main lojaDB;
 
     public JTabbedPaneFrame(Main lojaDB) {
-        super("Controle Criança Bonita");
+        super("Controle de Estoque");
         this.lojaDB = lojaDB;
         tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
         tabbedPane.addChangeListener(new ChangeListener() {
@@ -72,6 +72,9 @@ public class JTabbedPaneFrame extends JFrame {
 
         add(tabbedPane); // add JTabbedPane to frame     
     } // end JTabbedPaneFrame constructor
+    public void setConfirmaVendaPanelVisible(boolean flag){
+        panelVenda.setConfirmaVendaPanelVisible(flag);
+    }
     public String getTabName(){
         return tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
     }

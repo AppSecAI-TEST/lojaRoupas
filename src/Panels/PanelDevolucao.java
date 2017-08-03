@@ -5,11 +5,15 @@
  */
 package Panels;
 
+import auxPanels.MyFrame;
 import Main.Main;
 import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import javax.swing.BoxLayout;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -19,6 +23,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
 
     JTable tableDevol;
     Main lojaDB;
+    MyFrame frameNewClient;
     String columnTableNames[] = new String[]{"Código", "Tipo", "Descrição", "Cliente", "Data da venda", "Desconto dado", "Valor Pago"};
     public PanelDevolucao(Main lojaDB) {
         this.lojaDB=lojaDB;
@@ -42,7 +47,9 @@ public class PanelDevolucao extends javax.swing.JPanel {
         setProductRegistred(true);
         String key = getKey();
         if(key!=null)
-            resultsOfSearch(getOption(), key);      
+            resultsOfSearch(getOption(), key);           
+        lojaDB.setComboBox("Cliente", "Nome_Cliente", clientInBox);
+        tableDevolucaoPanel.setPreferredSize(new Dimension(420,100));
     }
     public void setProductRegistred(boolean flag){
         productNotRegistredCheckBox.setSelected(!flag);  
@@ -94,7 +101,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
                     columnOfClient=i; 
                 if(s.equals("Data_Transacao"))
                     columnOfData=i; 
-                if(s.equals("TipoDeTransacao"))
+                if(s.equals("Tipo_de_Transacao"))
                     columnOfTipoDeTransacao=i; 
             }      
             tableDevol.setModel(new DefaultTableModel(columnTableNames,0)); 
@@ -248,6 +255,11 @@ public class PanelDevolucao extends javax.swing.JPanel {
         clientInBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         addClientButton.setText("cadastrar novo cliente ");
+        addClientButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addClientButtonActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("Valor do produto*: ");
 
@@ -276,13 +288,13 @@ public class PanelDevolucao extends javax.swing.JPanel {
             }
         });
 
-        jLabel5.setText("Cliente*: ");
+        jLabel5.setText("Cliente: ");
 
         jLabel6.setText("Data*: ");
 
         jLabel7.setText("Hora*: ");
 
-        jLabel8.setText("Motivo*: ");
+        jLabel8.setText("Motivo: ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -340,7 +352,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
                                                 .addComponent(motivoField, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(concluirButton)))))
-                                .addGap(0, 30, Short.MAX_VALUE)))
+                                .addGap(0, 36, Short.MAX_VALUE)))
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -397,10 +409,9 @@ public class PanelDevolucao extends javax.swing.JPanel {
                     .addComponent(jLabel7)
                     .addComponent(horaField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(motivoField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(concluirButton))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(motivoField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(concluirButton)
                     .addComponent(jLabel8))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -501,6 +512,32 @@ public class PanelDevolucao extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_inCreditOptionActionPerformed
 
+    private void addClientButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addClientButtonActionPerformed
+        PanelCadastro cadastroClient = new PanelCadastro(lojaDB, this);        
+        lojaDB.setTabbedPaneVisible(false);
+        frameNewClient = new MyFrame();
+        frameNewClient.add(cadastroClient);
+        frameNewClient.setVisible(true);
+        frameNewClient.setSize(new Dimension(500, 700));
+        frameNewClient.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frameNewClient.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                lojaDB.setTabbedPaneVisible(true);
+                frameNewClient.exitProcedure();
+            }
+        });
+    }//GEN-LAST:event_addClientButtonActionPerformed
+    public void returnVisible(String newClient){
+        lojaDB.setTabbedPaneVisible(true);
+        frameNewClient.setEnabled(false);
+        frameNewClient.dispose();        
+        lojaDB.setComboBox("Cliente", "Nome_Cliente", clientInBox);
+        clientInBox.setSelectedItem(newClient);
+        //CODE HERE!!!!!!!!!!
+        //update comboBox with new client
+        //set comboBox to the new client
+    }
     private void inMoneyOptionActionPerformed(java.awt.event.ActionEvent evt) {                                              
         if(inMoneyOption.isSelected())
             clientInBox.setVisible(false);
@@ -525,7 +562,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
             if(inMoneyOption.isSelected())
                 client = clientInField.getText();
             if(inCreditOption.isSelected())
-                client = Main.getChoosedComboBox(clientInBox);            
+                client = Main.getChoosedComboBox(clientInBox); 
             if(Main.isDateValid(data)==false || Main.isTimeValid(hora)==false){
                 JOptionPane.showMessageDialog(concluirButton, "Data ou hora inválida!", "Aviso", JOptionPane.WARNING_MESSAGE);            
                 return;
@@ -534,25 +571,80 @@ public class PanelDevolucao extends javax.swing.JPanel {
             hora = Main.formatStringToSql("Time", hora);
             String query1 = "UPDATE Mercadoria SET Status = \'no estoque\' WHERE ID_Mercadoria ="+barCode;                          
             lojaDB.executeQuery(query1);
-            String query2 = "INSERT into Transacao(TipoDeTransacao, Valor_Total, Data_Transacao, Hora_Transacao, "
+            String query2 ="";
+            if(inMoneyOption.isSelected())
+                query2 = "INSERT into Transacao(Tipo_de_Transacao, Valor_em_Dinheiro, Data_Transacao, Hora_Transacao, "
                 + "Descricao_Transacao, ID_Caixa, Observacao, Cliente) VALUES ("
-                    + "\"devolucao\","+ tot+","+data+","+hora+",\""+
-                    barCode+"\","+lojaDB.getOfCaixa("ID_Caixa")+",\"Motivo: "+motivo
-                    + "\",\""+client+"\")";            
-            lojaDB.executeQuery(query2);
-            
-            JOptionPane.showMessageDialog(null, "Devolução concluida com sucesso", "Aviso", JOptionPane.WARNING_MESSAGE);                                             
-            return;
+                + "\"devolucao\", -"+ tot+","+data+","+hora+",\""+
+                barCode+"\","+lojaDB.getOfCaixa("ID_Caixa")+",\"Motivo: "+motivo
+                + "\",\""+client+"\")";
+            if(inCreditOption.isSelected())
+                query2 = "INSERT into Transacao(Tipo_de_Transacao, Valor_em_Dinheiro, Valor_com_SaldoCliente, Data_Transacao, Hora_Transacao, "
+                + "Descricao_Transacao, ID_Caixa, Observacao, Cliente) VALUES ("
+                + "\"devolucao\", 0.00, -"+ tot+","+data+","+hora+",\""+
+                barCode+"\","+lojaDB.getOfCaixa("ID_Caixa")+",\"Motivo: "+motivo
+                + "\",\""+client+"\")";
+                             
+            lojaDB.executeQuery(query2); 
+            if(inMoneyOption.isSelected())
+                JOptionPane.showMessageDialog(null, "Devolução concluida com sucesso", "Aviso", JOptionPane.WARNING_MESSAGE);                                             
+            if(inCreditOption.isSelected()){
+                JOptionPane.showMessageDialog(null, "Devolução e atualização de saldo do cliente concluídos com sucesso ", "Aviso", JOptionPane.WARNING_MESSAGE);
+                addSaldoCliente(client, tot);
+            }               
         }
         if(productNotRegistredCheckBox.isSelected()){
             if(isValidSituationNotRegistred()==false)
                 return;
-            //CODE HERE!!!!!!!!!!
-            
-            return;
+            String tot = valorField.getText();
+            String data = dataField.getText();
+            String hora = horaField.getText();
+            String motivo = motivoField.getText();
+            String client="";
+            if(inMoneyOption.isSelected())
+                client = clientInField.getText();
+            if(inCreditOption.isSelected())
+                client = Main.getChoosedComboBox(clientInBox); 
+            if(Main.isDateValid(data)==false || Main.isTimeValid(hora)==false){
+                JOptionPane.showMessageDialog(concluirButton, "Data ou hora inválida!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+                return;
+            }
+            tot=tot.trim().replace(",", ".");
+            if(Main.isDoubleValid(tot)==false){
+                JOptionPane.showMessageDialog(concluirButton, "Digite um valor válido", "Aviso", JOptionPane.WARNING_MESSAGE);            
+                return;
+            }
+            data = Main.formatStringToSql("Date", data);
+            hora = Main.formatStringToSql("Time", hora);
+            String query = "INSERT into Transacao(Tipo_de_Transacao, Valor_em_Dinheiro, Data_Transacao, Hora_Transacao, "
+                + "ID_Caixa, Observacao, Cliente) VALUES ("
+                    + "\"devolucao\", -"+ tot+","+data+","+hora+
+                    ","+lojaDB.getOfCaixa("ID_Caixa")+",\"Motivo: "+motivo+
+                     "\",\""+client+"\")";            
+            lojaDB.executeQuery(query); 
+            if(inMoneyOption.isSelected())
+                JOptionPane.showMessageDialog(null, "Devolução concluida com sucesso", "Aviso", JOptionPane.WARNING_MESSAGE);                                             
+            if(inCreditOption.isSelected()){
+                JOptionPane.showMessageDialog(null, "Devolução e atualização de saldo do cliente concluídos com sucesso ", "Aviso", JOptionPane.WARNING_MESSAGE);
+                addSaldoCliente(client, tot);
+            }                           
         }
-        //if(inMoneyOption.isSelected() && productNotRegistredCheckBox.isSelected()==false)
+        
 
+    }
+    public void addSaldoCliente(String nameClient, String creditToAdd){
+        double credit = Double.parseDouble(creditToAdd);
+        String saldoS = lojaDB.getColumnWithColumnKey("Cliente", "Nome_Cliente", "\'"+nameClient+"\'", "Saldo_Cliente");
+        double saldo;
+        try{
+            saldo = Double.parseDouble(saldoS);
+        }catch(Exception e){
+            saldo =0;
+        }
+        saldo +=credit;
+        saldoS=Main.twoDig(saldo);
+        String query = "UPDATE Cliente SET Saldo_Cliente = "+saldoS+" WHERE Nome_Cliente = \'"+nameClient+"\'";
+        lojaDB.executeQuery(query);
     }
     public boolean isValidSituationRegistred(){
         int[] rows = tableDevol.getSelectedRows();

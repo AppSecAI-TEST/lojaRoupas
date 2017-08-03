@@ -12,3 +12,24 @@ solucao para o programa de penduras
 -ao adicionar ou retirar dinheiro do caixa, criar uma transacao
 -trocar o sistema de consulta para consultar sempre que muda o JTextField
 -botar perguntas "tem certeza ...."
+-centralizar o conteudo das tabelas
+-Conferir sempre a tabela do Caixa, Mercadoria, Transacao
+-nao permitir cadastro de clientes com o mesmo nome
+-opcao na venda de usar o crédito do cliente
+-implementar a finalizacao de venda com cartao de credito, dinheiro ou fiado
+-botar os JComboBoxs com Scroll para o caso de muitas opcoes nele
+
+
+
+
+
+
+
+venda###1#camisa#a#-#0.10#1.00##2#vestido#e#-#0.60#3.00##3#calça#é#-#0.00#20.40###24.4###0.7###23.7
+
+
+
+
+
+
+

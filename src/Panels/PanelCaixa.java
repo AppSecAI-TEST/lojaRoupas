@@ -6,10 +6,15 @@
 package Panels;
 
 import Main.Main;
+import auxPanels.AddOrRemovePanel;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -46,7 +51,7 @@ public class PanelCaixa extends javax.swing.JPanel {
     }
     private void setLabels(Double valueVendasDev){
         abrirFecharCaixaButton.setText("Fechar caixa");
-        dataAberturaField.setText(lojaDB.caixaMap.get("Data_Abertura"));
+        dataAberturaField.setText(Main.SqlDateToNormalFormat(lojaDB.caixaMap.get("Data_Abertura")));
         horaAberturaField.setText(lojaDB.caixaMap.get("Hora_Abertura"));
         adicionadoField.setText(lojaDB.caixaMap.get("Adicionado"));
         dataAberturaField.setEditable(false);
@@ -245,51 +250,61 @@ public class PanelCaixa extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     
     private void adicionarDinheiroButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adicionarDinheiroButtonActionPerformed
-        if(lojaDB.caixaAberto==false){
-            JOptionPane.showMessageDialog(adicionarDinheiroButton, "Antes abra o caixa!", "Aviso", JOptionPane.WARNING_MESSAGE);            
-            return;
-        }
-        String input = JOptionPane.showInputDialog(adicionarDinheiroButton, "Digite o valor a incluir no caixa para troco!", "Incluir trocado no caixa", JOptionPane.WARNING_MESSAGE);            
-        if (input==null)
-            return;
-        Double trocado;
-        if(Main.isDoubleValid(input)==false){
-            JOptionPane.showMessageDialog(adicionarDinheiroButton, "Formato inválido!", "Aviso", JOptionPane.WARNING_MESSAGE);            
-            return;
-        }
-        trocado=Main.formatDoubleString(input);
-        addOrRemoveMoney("add", trocado);
-        update();
+        addOrRemoveActionPerformed("adicionar", "Adição de dinheiro ao caixa");
     }//GEN-LAST:event_adicionarDinheiroButtonActionPerformed
-    
-    private void retirarDinheiroButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_retirarDinheiroButtonActionPerformed
+    private void addOrRemoveActionPerformed(String option, String label){
         if(lojaDB.caixaAberto==false){
-            JOptionPane.showMessageDialog(retirarDinheiroButton, "Antes abra o caixa!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+            JOptionPane.showMessageDialog(null, "Antes abra o caixa!", "Aviso", JOptionPane.WARNING_MESSAGE);            
             return;
-        }
-        String input = JOptionPane.showInputDialog(retirarDinheiroButton, "Digite o valor a ser retirado do caixa!", "Retirar dinheiro do caixa", JOptionPane.WARNING_MESSAGE);            
-        if (input==null)
-            return;
-        Double trocado;
-        input = input.trim();
-        input = input.replace(",", ".");
-        try{
-            trocado=Double.parseDouble(input);
-        }
-        catch(Exception e){
-            JOptionPane.showMessageDialog(retirarDinheiroButton, "Formato inválido!", "Aviso", JOptionPane.WARNING_MESSAGE);            
-            return;
-        }
-        addOrRemoveMoney("remove", trocado);
+        }      
+        String data_abertura = Main.SqlDateToNormalFormat(lojaDB.getOfCaixa("Data_Abertura"));
+        AddOrRemovePanel addPanel = new AddOrRemovePanel("Valor a "+ option,"", data_abertura, "");
+         String data="", hora="", value="";
+        int result = JOptionPane.showConfirmDialog(null, addPanel, 
+               label, JOptionPane.OK_CANCEL_OPTION);
+        while(result == JOptionPane.OK_OPTION ){
+            value = addPanel.getValue();
+            data = addPanel.getData();
+            hora = addPanel.getHora();
+            if(isValidFields(addPanel))
+                break;
+            addPanel = new AddOrRemovePanel("Valor a "+option, value, data, hora);
+            result = JOptionPane.showConfirmDialog(null, addPanel, 
+               label, JOptionPane.OK_CANCEL_OPTION); 
+        }        
+        if (result != JOptionPane.OK_OPTION)
+            return;                   
+        Double trocado = Main.formatDoubleString(value);;
+        JOptionPane.showMessageDialog(null, "Operação realizada com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);                    
+        addOrRemoveMoney(option, trocado, data, hora);
         update();
+    }
+    private void retirarDinheiroButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_retirarDinheiroButtonActionPerformed
+        addOrRemoveActionPerformed("retirar", "Retirada de dinheiro do caixa");
     }//GEN-LAST:event_retirarDinheiroButtonActionPerformed
-
+    private boolean isValidFields(AddOrRemovePanel panel){
+        String input = panel.getValue();
+        String data = panel.getData();
+        String hora = panel.getHora();
+        if(Main.isDoubleValid(input)==false || Main.formatDoubleString(input)<0){
+            JOptionPane.showMessageDialog(null, "Valor inválido!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+            return false;
+        }       
+        if(Main.isDateValid(data)==false ){
+            JOptionPane.showMessageDialog(null, "Data inválida!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+            return false;
+        }    
+        if(Main.isTimeValid(hora)==false){
+            JOptionPane.showMessageDialog(null, "Hora inválida!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+            return false;
+        }           
+        return true;
+    }
     private void abrirFecharCaixaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abrirFecharCaixaButtonActionPerformed
         if(lojaDB.caixaAberto){
             int answ = JOptionPane.showConfirmDialog(abrirFecharCaixaButton, "Tem certeza que quer fechar o caixa?", "Tela de confirmação", JOptionPane.OK_CANCEL_OPTION);
             if(answ!=0)
-                return;
-            
+                return;            
         }
         if(lojaDB.caixaAberto==false){
             if(isValidEntry()==false){
@@ -310,8 +325,7 @@ public class PanelCaixa extends javax.swing.JPanel {
         if(Main.isDoubleValid(adicionado)==false)
             return false;
         return true;
-    }
-        
+    }        
     public void abrirCaixa(){
         String data = dataAberturaField.getText();
         String hora = horaAberturaField.getText();
@@ -323,27 +337,44 @@ public class PanelCaixa extends javax.swing.JPanel {
         lojaDB.executeQuery(query);
         update();
     }
-    private void addOrRemoveMoney(String command, Double value){
+    private void addOrRemoveMoney(String command, Double value, String data, String hora){
         Double initialValue;
         String query;
         query="UPDATE Caixa SET ";
-        if(command.equals("add")){
+        if(command.equals("adicionar")){
             query+="Adicionado = ";
             initialValue = Double.parseDouble(lojaDB.getOfCaixa("Adicionado"));
             query += Main.twoDig(value+initialValue);
         }
-        else if(command.equals("remove")){
+        else if(command.equals("retirar")){
             query+="Retirado = ";
             initialValue = Double.parseDouble(lojaDB.getOfCaixa("Retirado"));
             query += Main.twoDig(value+initialValue);
         }          
         query+=" where ID_Caixa = "+ lojaDB.getOfCaixa("ID_Caixa");
         lojaDB.executeQuery(query);
+        //----------------------------------------------------------------------
+        //----------------------------------------------------------------------     
+        data = Main.formatStringToSql("Date", data);
+        hora = Main.formatStringToSql("Time", hora);
+            
+        String query2 = "INSERT into Transacao(Tipo_de_Transacao, Valor_em_dinheiro, Data_Transacao, Hora_Transacao, "
+            + "Descricao_Transacao, ID_Caixa)"; 
+        String tot = Main.twoDig(value);
+        if(command.equals("adicionar"))
+            query2 += " VALUES ("
+            + "\"caixa\","+ tot+","+data+","+hora+",\"adição ao caixa\","+lojaDB.getOfCaixa("ID_Caixa")+")";            
+        else if(command.equals("retirar"))
+            query2 += " VALUES ("
+            + "\"caixa\", -"+ tot+","+data+","+hora+",\"retirada do caixa\","+lojaDB.getOfCaixa("ID_Caixa")+")";            
+        lojaDB.executeQuery(query2); 
+            
     }
     public void update(){
         lojaDB.setBooleanCaixaAberto();
         setLabelsCaixa();
         lojaDB.updateTable(tableCaixa, tableCaixaPanel,"Transacao", false, null);
+        
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton abrirFecharCaixaButton;

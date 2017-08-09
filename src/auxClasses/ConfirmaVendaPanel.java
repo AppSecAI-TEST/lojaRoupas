@@ -58,7 +58,7 @@ public class ConfirmaVendaPanel extends javax.swing.JPanel {
                 }catch(Exception ex){}                
             }
         });        
-        Main.setDataAndHourFields(dataField, horaField);
+        Main.setDateAndHour(dataField, horaField);
     }
     public void updateFaltaPagarLabel(){
         Double t=0.0, s=0.0, d=0.0, c=0.0, f=0.0;

@@ -33,6 +33,7 @@ public class Main {
     public HashMap<String,String> caixaMap=new HashMap();
     static long time = -1;
     static DateAndHour myDateAndHour;
+    static int secondsToWaitTimeServer = 2;
     Main() {   
         pathConnection = getPathConnection("CriancaBonitaDB");
         tabbedFrame = new JTabbedPaneFrame(this);
@@ -182,8 +183,8 @@ public class Main {
         System.out.println("Chave não encontrada em caixaMap");
         return null;
     }
-    public static void setDataAndHourFields(JTextField dataField, JTextField horaField){        
-        DateAndHour dateAndHour =  getDateAndHour();
+    private static synchronized void setDataAndHourFields(JTextField dataField, JTextField horaField, DateAndHour dateAndHour){
+        myDateAndHour=dateAndHour;
         if(dateAndHour.isServerHour){
             dataField.setEditable(false);
             horaField.setEditable(false);
@@ -194,6 +195,60 @@ public class Main {
         }
         dataField.setText(dateAndHour.date);
         horaField.setText(dateAndHour.hour);    
+    }
+    public static void setDateAndHour(JTextField dataField, JTextField horaField){
+        if(time!=-1)
+            if(System.currentTimeMillis()-time<secondsToWaitTimeServer*1000)
+                setDataAndHourFields(dataField, horaField, myDateAndHour);
+        time=System.currentTimeMillis();
+        DateAndHour dateAndHour=new DateAndHour();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
+        Date date = new Date();
+        String shakeDate=dateFormat.format(date);
+        String[]split = shakeDate.split("/");
+        dateAndHour.date=split[2]+"/"+split[1]+"/"+split[0];
+        dateAndHour.hour=hourFormat.format(date);
+        dateAndHour.isServerHour=false;
+        setDataAndHourFields(dataField, horaField, dateAndHour); 
+        getDateAndHourServerThread("time-a.nist.gov", dataField, horaField);
+        getDateAndHourServerThread("time-b.nist.gov", dataField, horaField);
+        getDateAndHourServerThread("time-c.nist.gov", dataField, horaField);
+        getDateAndHourServerThread("time-d.nist.gov", dataField, horaField);        
+    }
+    private static void getDateAndHourServerThread(String TIME_SERVER, JTextField dataField, JTextField horaField){
+        new Thread(){
+            public void run(){
+                getDateAndHourServer(TIME_SERVER, dataField, horaField);
+            }
+        }.start();        
+    }
+    private static void getDateAndHourServer(String TIME_SERVER, JTextField dataField, JTextField horaField){
+        DateAndHour dateAndHour=null;  
+        long timeAux=System.currentTimeMillis();
+        try{  
+            dateAndHour=new DateAndHour();
+            NTPUDPClient timeClient = new NTPUDPClient();
+            InetAddress inetAddress = InetAddress.getByName(TIME_SERVER);
+            TimeInfo timeInfo = timeClient.getTime(inetAddress);
+            long returnTime = timeInfo.getReturnTime();
+            Date time = new Date(returnTime);
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");        
+            dateAndHour.isServerHour=true;
+            String shakeDate=dateFormat.format(time);
+            String[]split = shakeDate.split("/");
+            dateAndHour.date=split[2]+"/"+split[1]+"/"+split[0];
+            dateAndHour.hour=hourFormat.format(time);
+        }
+        catch(Exception e){
+            Main.p("Clique com o botão direito em libraries e em Add JAR/Folder");
+            Main.p("Ou ligue a internet");
+            dateAndHour=null;
+        }
+        if(System.currentTimeMillis()-timeAux<secondsToWaitTimeServer*1000-200)
+            if(dateAndHour!=null)
+                setDataAndHourFields(dataField, horaField, dateAndHour);
     }
     public void addRow(String[] row, JTable table){
         DefaultTableModel model=(DefaultTableModel)table.getModel();
@@ -549,67 +604,6 @@ public class Main {
                 vendasDinheiro+ devolucoesDinheiro;
         message+="\n\nTotal em dinheiro:                             "+Main.twoDig(t);
         return message;
-    }
-    public static DateAndHour getDateAndHour(){
-        if(time!=-1)
-            if(System.currentTimeMillis()-time<60000)
-                return myDateAndHour;
-        time=System.currentTimeMillis();
-        DateAndHour dateAndHour = getDateAndHour("time-a.nist.gov");
-        if(dateAndHour != null){
-            myDateAndHour=dateAndHour;
-            return dateAndHour;
-        }
-        dateAndHour = getDateAndHour("time-b.nist.gov");
-        if(dateAndHour != null){
-            myDateAndHour=dateAndHour;
-            return dateAndHour;
-        }
-        dateAndHour = getDateAndHour("time-c.nist.gov");
-        if(dateAndHour != null){
-            myDateAndHour=dateAndHour;
-            return dateAndHour;
-        }
-        dateAndHour = getDateAndHour("time-d.nist.gov");
-        if(dateAndHour != null){
-            myDateAndHour=dateAndHour;
-            return dateAndHour;
-        }
-        dateAndHour=new DateAndHour();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-        DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");
-        Date date = new Date();
-        String shakeDate=dateFormat.format(date);
-        String[]split = shakeDate.split("/");
-        dateAndHour.date=split[2]+"/"+split[1]+"/"+split[0];
-        dateAndHour.hour=hourFormat.format(date);
-        myDateAndHour=dateAndHour;
-        return dateAndHour;
-    }
-    public static DateAndHour getDateAndHour(String TIME_SERVER){
-        DateAndHour dateAndHour=new DateAndHour();
-        try{
-            TIME_SERVER = "time-a.nist.gov";   
-            NTPUDPClient timeClient = new NTPUDPClient();
-            InetAddress inetAddress = InetAddress.getByName(TIME_SERVER);
-            TimeInfo timeInfo = timeClient.getTime(inetAddress);
-            long returnTime = timeInfo.getReturnTime();
-            Date time = new Date(returnTime);
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-            DateFormat hourFormat = new SimpleDateFormat("HH:mm:ss");        
-            dateAndHour.isServerHour=true;
-            String shakeDate=dateFormat.format(time);
-            String[]split = shakeDate.split("/");
-            dateAndHour.date=split[2]+"/"+split[1]+"/"+split[0];
-            dateAndHour.hour=hourFormat.format(time);
-        }
-        catch(Exception e){
-            Main.p("Clique com o botão direito em libraries e em Add JAR/Folder");
-            Main.p("Ou ligue a internet");
-        }
-        if(dateAndHour.isServerHour)
-            return dateAndHour;
-        return null;
     }
     public double calculateVendasDev(){  
         double vendasDev = 0;

@@ -101,7 +101,7 @@ public class FechamentoCaixaPanel extends javax.swing.JPanel {
         horaField.setText(hora);
         obsField.setText(obs);
         if(data==null)
-            Main.setDataAndHourFields(dataField, horaField);
+            Main.setDateAndHour(dataField, horaField);
     }
     public String getData(){
         return dataField.getText();

@@ -33,6 +33,7 @@ public class PanelCaixa extends javax.swing.JPanel {
         JScrollPane scrollTable = new JScrollPane(tableCaixa);
         tableCaixaPanel.removeAll();
         tableCaixaPanel.add(scrollTable);
+        somenteCaixaAtualCheckBox.setSelected(true);
         update();
     }
 

@@ -43,7 +43,7 @@ public class AddOrRemovePanel extends javax.swing.JPanel {
             recebimento_retirarSaldoCheckBox.setSelected(true);
         }
         if(dField==null)
-            Main.setDataAndHourFields(dataField, horaField);
+            Main.setDateAndHour(dataField, horaField);
     }
     public void setToolTip(String text){
         recebimento_retirarSaldoCheckBox.setToolTipText(text);

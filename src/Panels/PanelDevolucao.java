@@ -46,7 +46,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
         clientKeyField.getDocument().addDocumentListener(documentClient);
         AuxFieldCreditDevol documentDate = new AuxFieldCreditDevol(this, "date");
         dateKeyField.getDocument().addDocumentListener(documentDate);           
-        Main.setDataAndHourFields(dataField, horaField);
+        Main.setDateAndHour(dataField, horaField);
     }
     public void pressButtonWithTip(String tip){
         switch(tip){
@@ -91,7 +91,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
             resultsOfSearch(getOption(), key);           
         lojaDB.setComboBox("Cliente", "Nome_Cliente", clientInBox);
         tableDevolucaoPanel.setPreferredSize(new Dimension(420,100));
-        Main.setDataAndHourFields(dataField, horaField);
+        Main.setDateAndHour(dataField, horaField);
     }
     public void setProductRegistred(boolean flag){
         productNotRegistredCheckBox.setSelected(!flag);  

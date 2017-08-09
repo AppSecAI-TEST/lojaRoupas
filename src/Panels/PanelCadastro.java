@@ -11,7 +11,9 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import Main.Main;
 import PanelsCadastro.*;
-import auxPanels.ConfirmaVendaPanel;
+import auxClasses.ConfirmaVendaPanel;
+import auxClasses.PopClickListener;
+import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -48,6 +50,7 @@ public class PanelCadastro extends javax.swing.JPanel {
         panelUsuario = new PanelUsuario(lojaDB); 
         tabbedPaneCadastro.addTab( "Usuário", null, panelUsuario, "Usuário" );              
         tableCadastro.setDefaultEditor(Object.class, null);
+        tableCadastro.addMouseListener(new PopClickListener(this));
     }    
     public ResultSet executeQuery(String query){
         return lojaDB.executeQuery(query);
@@ -87,7 +90,7 @@ public class PanelCadastro extends javax.swing.JPanel {
         );
         tableCadastroPanelLayout.setVerticalGroup(
             tableCadastroPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 44, Short.MAX_VALUE)
+            .addGap(0, 106, Short.MAX_VALUE)
         );
 
         inserirButton.setText("Inserir");
@@ -97,6 +100,8 @@ public class PanelCadastro extends javax.swing.JPanel {
             }
         });
 
+        tabbedPaneCadastro.setMinimumSize(new java.awt.Dimension(360, 180));
+        tabbedPaneCadastro.setPreferredSize(new java.awt.Dimension(360, 180));
         tabbedPaneCadastro.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 tabbedPaneCadastroStateChanged(evt);
@@ -109,34 +114,39 @@ public class PanelCadastro extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(tableCadastroPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(tabbedPaneCadastro, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(tabbedPaneCadastro, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(inserirButton)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(inserirButton)))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(206, 206, 206)
+                        .addGap(170, 170, 170)
                         .addComponent(inserirButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(tabbedPaneCadastro)
-                        .addGap(18, 18, 18)))
+                        .addComponent(tabbedPaneCadastro, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                 .addComponent(tableCadastroPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
     public void update(){        
         lojaDB.updateTable(tableCadastro, tableCadastroPanel, getTableName(), false, null);
     }
+    public void updateSQL(MouseEvent evt){
+        int row = tableCadastro.rowAtPoint(evt.getPoint());
+        int col = tableCadastro.columnAtPoint(evt.getPoint());
+        lojaDB.updateSQL(tableCadastro, getTableName(), row, col);
+        update();
+    }    
     private void tabbedPaneCadastroStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPaneCadastroStateChanged
         update();
     }//GEN-LAST:event_tabbedPaneCadastroStateChanged

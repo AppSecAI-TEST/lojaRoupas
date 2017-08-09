@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
-import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -79,8 +78,6 @@ public class JTabbedPaneFrame extends JFrame {
         return tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
     }
     public void setDataHoraPanels() {
-        if (panelVenda != null) 
-            panelVenda.setDataHoraPanelVenda();
         if(panelDevolucao !=null)
             panelDevolucao.setDataHoraPanelDevol();
         
@@ -102,12 +99,12 @@ public class JTabbedPaneFrame extends JFrame {
             flagAberto = false;
         }
         if (flagAberto == false) {
-            System.out.println("Não há caixa aberto.");
+            //System.out.println("Não há caixa aberto.");
             setCaixaAberto(false);
             return;
         }
         setCaixaAberto(true);
-        System.out.println("Há caixa aberto.");
+        //System.out.println("Há caixa aberto.");
         try {
             ResultSetMetaData metaData = results.getMetaData();
             int numberOfColumns = metaData.getColumnCount();

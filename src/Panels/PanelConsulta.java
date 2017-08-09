@@ -6,7 +6,10 @@
 package Panels;
 
 import Main.Main;
+import auxClasses.AuxFieldCreditDevol;
+import auxClasses.PopClickListener;
 import java.awt.Dimension;
+import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.HashSet;
@@ -36,6 +39,14 @@ public class PanelConsulta extends javax.swing.JPanel {
         tableConsultaPanel.removeAll();
         tableConsultaPanel.add(scrollTable); 
         procuraFieldActionPerformed(null);
+        AuxFieldCreditDevol documentListener = new AuxFieldCreditDevol(this);
+        procuraField.getDocument().addDocumentListener(documentListener);
+        
+    }
+    public void search(){
+        String key = getKey();
+        key = Main.prepareToSearch(key);
+        resultsOfSearch(key); 
     }
     private void createTable(String[] columnNames){
         DefaultTableModel model;      
@@ -44,6 +55,13 @@ public class PanelConsulta extends javax.swing.JPanel {
         tableConsulta = new JTable(model);        
         tableConsultaPanel.setLayout(new BoxLayout(tableConsultaPanel, BoxLayout.PAGE_AXIS));     
         tableConsulta.setDefaultEditor(Object.class, null);
+        tableConsulta.addMouseListener(new PopClickListener(this));
+    }
+    public void updateSQL(MouseEvent evt){
+        int row = tableConsulta.rowAtPoint(evt.getPoint());
+        int col = tableConsulta.columnAtPoint(evt.getPoint());        
+        lojaDB.updateSQL(tableConsulta, getTableName(), row, col);
+        update();
     }
     public void update(){
         String key = getKey();
@@ -100,8 +118,12 @@ public class PanelConsulta extends javax.swing.JPanel {
             else
                 tableConsulta.setModel(new DefaultTableModel(Main.getOff_NameTable(nameColumns, tableName),0)); 
             tableConsulta.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-            for(int i=0;i<tableConsulta.getColumnCount();i++)
+            for(int i=0;i<tableConsulta.getColumnCount();i++){
+                if(i==0) width=width/2;
                 tableConsulta.getColumnModel().getColumn(i).setPreferredWidth(width);
+                if(i==0) width=width*2;
+            }
+               
             while (results.next()) {
                 String columns[]=new String[numberOfColumns];
                 String originalColumns[]=new String[numberOfColumns];
@@ -133,9 +155,9 @@ public class PanelConsulta extends javax.swing.JPanel {
         }
         catch (Exception exception) {
             System.out.println("Erro ao montar a tabela");
-            System.out.println(exception.getMessage());
+            exception.printStackTrace();
         } // end catch 
-        tableConsultaPanel.setPreferredSize(new Dimension(numCol*width,300)); 
+        tableConsultaPanel.setPreferredSize(new Dimension(numCol*width-width/2,300)); 
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

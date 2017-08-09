@@ -47,25 +47,18 @@ public class PanelEstatistica extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        totalMesLabel = new javax.swing.JLabel();
-        totalDiaLabel = new javax.swing.JLabel();
-        atualMesLabel = new javax.swing.JLabel();
-        atualDiaLabel = new javax.swing.JLabel();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         tableEstatisticaPanel = new javax.swing.JPanel();
-
-        jLabel1.setText("Meta mês: ");
-
-        jLabel2.setText("Meta dia: ");
-
-        totalMesLabel.setText("TotalMes");
-
-        totalDiaLabel.setText("TotalDia");
-
-        atualMesLabel.setText("AtualMes");
-
-        atualDiaLabel.setText("AtualDia");
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton3 = new javax.swing.JRadioButton();
+        jLabel1 = new javax.swing.JLabel();
+        jRadioButton4 = new javax.swing.JRadioButton();
+        jRadioButton5 = new javax.swing.JRadioButton();
+        jButton1 = new javax.swing.JButton();
 
         javax.swing.GroupLayout tableEstatisticaPanelLayout = new javax.swing.GroupLayout(tableEstatisticaPanel);
         tableEstatisticaPanel.setLayout(tableEstatisticaPanelLayout);
@@ -75,8 +68,31 @@ public class PanelEstatistica extends javax.swing.JPanel {
         );
         tableEstatisticaPanelLayout.setVerticalGroup(
             tableEstatisticaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 194, Short.MAX_VALUE)
+            .addGap(0, 198, Short.MAX_VALUE)
         );
+
+        jLabel3.setText("Resultados: ");
+
+        jLabel4.setText("Vendas por: ");
+
+        buttonGroup1.add(jRadioButton1);
+        jRadioButton1.setText("dia");
+
+        buttonGroup1.add(jRadioButton2);
+        jRadioButton2.setText("mês");
+
+        buttonGroup1.add(jRadioButton3);
+        jRadioButton3.setText("ano");
+
+        jLabel1.setText("Ordenar por: ");
+
+        buttonGroup2.add(jRadioButton4);
+        jRadioButton4.setText("data");
+
+        buttonGroup2.add(jRadioButton5);
+        jRadioButton5.setText("valor");
+
+        jButton1.setText("Estoque");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -88,33 +104,44 @@ public class PanelEstatistica extends javax.swing.JPanel {
                     .addComponent(tableEstatisticaPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1))
-                        .addGap(51, 51, 51)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(totalMesLabel)
-                            .addComponent(totalDiaLabel))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(atualDiaLabel)
-                            .addComponent(atualMesLabel))
-                        .addGap(0, 171, Short.MAX_VALUE)))
+                            .addComponent(jLabel3)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jRadioButton4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jRadioButton5))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jRadioButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jRadioButton2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jRadioButton3)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton1)))
+                        .addGap(0, 103, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(totalMesLabel)
-                    .addComponent(atualMesLabel))
+                    .addComponent(jLabel4)
+                    .addComponent(jRadioButton1)
+                    .addComponent(jRadioButton2)
+                    .addComponent(jRadioButton3)
+                    .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(totalDiaLabel)
-                    .addComponent(atualDiaLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(jLabel1)
+                    .addComponent(jRadioButton4)
+                    .addComponent(jRadioButton5))
+                .addGap(12, 12, 12)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tableEstatisticaPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -124,12 +151,17 @@ public class PanelEstatistica extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel atualDiaLabel;
-    private javax.swing.JLabel atualMesLabel;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton jRadioButton3;
+    private javax.swing.JRadioButton jRadioButton4;
+    private javax.swing.JRadioButton jRadioButton5;
     private javax.swing.JPanel tableEstatisticaPanel;
-    private javax.swing.JLabel totalDiaLabel;
-    private javax.swing.JLabel totalMesLabel;
     // End of variables declaration//GEN-END:variables
 }

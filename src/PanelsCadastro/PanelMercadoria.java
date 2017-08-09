@@ -44,6 +44,7 @@ public class PanelMercadoria extends javax.swing.JPanel {
         tamField.setText("");
         precoField.setText("");
         obsField.setText("");
+        barCodeField.setText("");
         tipoMercadoriaBox.setSelectedIndex(0);
         estimativaBox.setSelectedIndex(0);                
     }
@@ -72,6 +73,10 @@ public class PanelMercadoria extends javax.swing.JPanel {
             return false;
         }
         String tam=tamField.getText();
+        if(tam.length()>3){
+            JOptionPane.showMessageDialog(null, "O tamanho pode ser somente até um número de 3 dígitos", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
         try{
             Integer.parseInt(tam);
         }

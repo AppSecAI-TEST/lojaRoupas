@@ -4,15 +4,16 @@ USE CriancaBonitaDB;
 -- NA HORA DE ADICIONAR AO BANCO DE DADOS, RETIRAR CARACTERES ESPECIAIS
 CREATE TABLE Transacao 
 	-- Venda, devolucao ou caixa
-( 
-	ID_Transacao                         integer  NOT NULL AUTO_INCREMENT,
-	Vendedor						   char(40) NULL,
-	Tipo_de_Transacao                  char(40) NOT NULL,
+( 	
+	ID_Transacao                     integer  NOT NULL AUTO_INCREMENT,
+	ID_Caixa					     integer NULL, 
+	Tipo_Transacao                  char(40) NOT NULL,
 		-- venda , devolucao, caixa
-	Valor_em_Dinheiro                      decimal(6,2)  NOT NULL ,
-	Valor_em_Cartao                  decimal(6,2)  NULL,
-	Valor_com_SaldoCliente           decimal(6,2)  NULL,
-		-- positivo: fiado    negativo: crédito por compras futuras
+	Vendedor						   char(40) NULL,
+	Dinheiro                      decimal(6,2)  NOT NULL ,
+	Cartao                        decimal(6,2)  NULL,
+	Fiado                            decimal(6,2)  NULL,
+	Com_SaldoCliente                 decimal(6,2)  NULL,
 	Data_Transacao                       date  NULL ,
     Hora_Transacao                        time NULL ,
 	Descricao_Transacao                         char(255) NULL   ,
@@ -20,13 +21,12 @@ CREATE TABLE Transacao
 		###tipo###
 		-- Na devolucao: A descricao é o ID_Mercadoria ou vazia/null se for produto não cadastrado
 		-- Na caixa: "retirada do caixa"  "adição ao caixa"
-	ID_Caixa					     integer NULL, 
 	Cliente                          char(40)   NULL       ,
 		-- somente auxiliar, nao serve como chave de procura
 	Observacao                      char(255)  NULL,
 		-- na devolução, corresponde ao motivo
-		-- na venda, corresponde ao desconto e outras coisas a serem adicionadas		
-	PRIMARY KEY (ID_Transacao)
+		-- na venda, corresponde ao desconto e outras coisas a serem adicionadas
+	PRIMARY KEY (ID_Transacao)		
 )
 ;
 
@@ -41,7 +41,7 @@ CREATE TABLE Cliente
 	Telefone_Fixo      char(18)  NULL ,
 	Endereco_Cliente   char(70)  NULL ,
 	Email_Cliente      char(50)  NULL,
-	CPF_Cliente        integer NULL,
+	CPF_Cliente        char(18)  NULL ,
 	Descricao_Cliente  char(70),
 	PRIMARY KEY (ID_Cliente)
 )
@@ -51,7 +51,7 @@ CREATE TABLE Fornecedor
 ( 
 	ID_Fornecedor      integer  NOT NULL AUTO_INCREMENT,
 	Nome_Fornecedor    char(50)  NOT NULL ,
-	CPF_Fornecedor     integer NULL,
+	CPF_Fornecedor     char(18)  NULL ,
 	Telefone_Fixo      char(18)  NULL ,
 	Telefone_Celular1  char(18)  NULL ,
 	Telefone_Celular2  char(18)  NULL ,
@@ -87,6 +87,7 @@ CREATE TABLE Caixa
 		-- calcular o final real e comparar com o informado
 	FinalInformado  decimal(6,2)  NULL,
 	QuebraDeCaixa   decimal(6,2)  NULL,
+	Observacao                      char(255)  NULL,
 	PRIMARY KEY (ID_Caixa)	
 )
 ;

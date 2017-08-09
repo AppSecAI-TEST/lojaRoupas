@@ -493,7 +493,7 @@ public class InterfaceGUI extends javax.swing.JFrame {
         }
         catch (Exception exception) {
             System.out.println("Erro ao montar a tabela");
-            System.out.println(exception);
+            exception.printStackTrace();
         } // end catch 
         int numCol=table.getColumnCount();
         tablePanel.setPreferredSize(new Dimension(numCol*width,300));

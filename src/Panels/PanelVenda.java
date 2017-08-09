@@ -1,8 +1,9 @@
 package Panels;
 
+import auxClasses.ConfirmaVendaPanel;
 import Main.Main;
-import auxPanels.ConfirmaVendaPanel;
-import auxPanels.MyFrame;
+import auxClasses.MyFrame;
+import auxClasses.PopClickListener;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -18,10 +19,6 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class PanelVenda extends javax.swing.JPanel {
-
-    /**
-     * Creates new form Panel_Venda
-     */    
     JTable tableVenda;
     Main lojaDB;    
     MyFrame frameConfirma;
@@ -33,7 +30,6 @@ public class PanelVenda extends javax.swing.JPanel {
         tableVendasPanel.removeAll();
         tableVendasPanel.add(scrollTable);         
         tableVenda.addMouseListener(new PopClickListener(this));
-
     }
     public void setConfirmaVendaPanelVisible(boolean flag){
         if(frameConfirma!=null)
@@ -44,8 +40,9 @@ public class PanelVenda extends javax.swing.JPanel {
         int col = tableVenda.columnAtPoint(evt.getPoint());
         if (row >= 0 && col >= 0) 
         {            
-            updateResultLabels(row, null, "remove");
-            Double descontoAntigo = Double.parseDouble(tableVenda.getValueAt(row, 4).toString());
+            updateResultLabels(row, null, "remove");            
+            int colOfDiscount = Main.getIndexColumnWithColumnName(tableVenda, "Desconto");
+            Double descontoAntigo = Double.parseDouble(tableVenda.getValueAt(row, colOfDiscount).toString());
             updateResultLabels(row, -1*descontoAntigo, "discount");                
             lojaDB.removeRow(row, tableVenda);
         } 
@@ -60,24 +57,30 @@ public class PanelVenda extends javax.swing.JPanel {
         int row = tableVenda.rowAtPoint(evt.getPoint());
         int col = tableVenda.columnAtPoint(evt.getPoint());
         Double discount=0.0;
-        if (row >= 0 && col >= 0){            
-            Double value = Double.parseDouble(tableVenda.getValueAt(row, 5).toString());
+        if (row >= 0 && col >= 0){        
+            int colOfValue = Main.getIndexColumnWithColumnName(tableVenda, "Valor");
+            Double value = Double.parseDouble(tableVenda.getValueAt(row, colOfValue).toString());
             String discountString = JOptionPane.showInputDialog("Digite o valor do desconto ou a porcentagem do desconto. (Ex: 20 ou 10%)");
             if(Main.isDoubleValid(discountString.replace("%", ""))==false)
                 return;
             discount = getDiscount(discountString, value);            
             if(discount!=null && discount<=value)
-            {
-                Double descontoAntigo = Double.parseDouble(tableVenda.getValueAt(row, 4).toString());
-                tableVenda.setValueAt(Main.twoDig(discount), row, 4);
+            {                
+                int colOfDiscount = Main.getIndexColumnWithColumnName(tableVenda, "Desconto");
+                Double descontoAntigo = Double.parseDouble(tableVenda.getValueAt(row, colOfDiscount).toString());
+                tableVenda.setValueAt(Main.twoDig(discount), row, colOfDiscount);
                 updateResultLabels(row, -1*descontoAntigo, "discount");
                 updateResultLabels(row, discount, "discount");
             }            
+            else{
+                JOptionPane.showMessageDialog(tableVenda, "Digite um valor válido e menor que o valor do produto!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+                return;
+            }
         } 
     }
     public Double getDiscount(String discountString, Double value){
         if(discountString==null){
-            
+            return null;
         }
         discountString = discountString.trim();
         Double discount;
@@ -99,8 +102,9 @@ public class PanelVenda extends javax.swing.JPanel {
         double subTotal = Double.parseDouble(subTotalLabel.getText());
         double total = Double.parseDouble(totalLabel.getText());
         double discount = Double.parseDouble(discountLabel.getText());
-        //--------------------------------------------------------------------------
-        double value = Double.parseDouble(tableVenda.getValueAt(row, 5).toString());        
+        //--------------------------------------------------------------------------        
+        int colOfValue = Main.getIndexColumnWithColumnName(tableVenda, "Valor");
+        double value = Double.parseDouble(tableVenda.getValueAt(row, colOfValue).toString());        
         switch(operation){
             case "remove":
                 subTotalLabel.setText(Main.twoDig(subTotal-value));
@@ -134,8 +138,8 @@ public class PanelVenda extends javax.swing.JPanel {
         lojaDB.addRow(row, tableVenda);
         updateResultLabels(0, Double.parseDouble(prec), "add");
     }
-    private ConsultaMercadoria getConfirmMessage(String barCode){
-        System.out.println(barCode);
+    public static ConsultaMercadoria getConfirmMessage(Main lojaDB, String barCode){
+        //System.out.println(barCode);
         ResultSet results = lojaDB.executeQuery("Select * from Mercadoria where ID_Mercadoria = "+barCode);
         String message="";
         HashMap <String, String> mercadoriaMap=new HashMap();
@@ -157,7 +161,8 @@ public class PanelVenda extends javax.swing.JPanel {
                     if(nameColumn[i]!=null)
                     {
                         mercadoriaMap.put(nameColumn[i], results.getString(i+1));
-                        message+=nameColumn[i]+": "+results.getString(i+1)+"\n";
+                        if(nameColumn[i].equals("Status")==false)
+                            message+="   "+nameColumn[i]+": "+results.getString(i+1)+"\n";
                     }
                 }                
             } 
@@ -172,7 +177,7 @@ public class PanelVenda extends javax.swing.JPanel {
         consulta.mercadoriaMap=mercadoriaMap;
         return consulta;
     }
-    private String changeNameColumn(String nameColumn){
+    private static String changeNameColumn(String nameColumn){
         if(nameColumn==null)
             return null;
         switch(nameColumn){
@@ -193,11 +198,6 @@ public class PanelVenda extends javax.swing.JPanel {
         }
     }    
     public void update(){
-        setDataHoraPanelVenda();
-    }
-    public void setDataHoraPanelVenda(){
-//        if(Main.isEmpty(dataField.getText()))
-//            dataField.setText(Main.SqlDateToNormalFormat(lojaDB.getOfCaixa("Data_Abertura")));
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -236,7 +236,7 @@ public class PanelVenda extends javax.swing.JPanel {
         );
         tableVendasPanelLayout.setVerticalGroup(
             tableVendasPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 222, Short.MAX_VALUE)
+            .addGap(0, 231, Short.MAX_VALUE)
         );
 
         jLabel1.setText("Subtotal: ");
@@ -273,21 +273,21 @@ public class PanelVenda extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(barCodeField, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(statusCaixaLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(9, 9, 9)
                         .addComponent(concluirVendaButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(subTotalLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(discountLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(totalLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(statusCaixaLabel)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(totalLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -301,29 +301,46 @@ public class PanelVenda extends javax.swing.JPanel {
                 .addComponent(statusCaixaLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tableVendasPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(subTotalLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(discountLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(totalLabel)
-                    .addComponent(concluirVendaButton))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(concluirVendaButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(subTotalLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(discountLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(totalLabel))))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
     private void barCodeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barCodeFieldActionPerformed
-        if(hasCodeInTable(barCodeField.getText())){
-            JOptionPane.showMessageDialog(barCodeField, "Esse produto já foi registrado nessa venda!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+        if(lojaDB.caixaAberto==false){
+            JOptionPane.showMessageDialog(barCodeField, "Antes da venda, deve-se abrir o caixa!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+            return;
+        }    
+        barCodeField.setText(barCodeField.getText().trim());
+        if(barCodeField.getText().equals("")){
+            JOptionPane.showMessageDialog(barCodeField, "Preencha o código da mercadoria", "Aviso", JOptionPane.WARNING_MESSAGE);            
             barCodeField.setText("");
             return;
         }       
-        ConsultaMercadoria consulta = getConfirmMessage(barCodeField.getText());
+        if(Main.isIntegerValid(barCodeField.getText())==false){
+            JOptionPane.showMessageDialog(barCodeField, "O código deve conter apenas números!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+            barCodeField.setText("");
+            return;
+        }          
+        if(hasCodeInTable(tableVenda, barCodeField.getText())){
+            JOptionPane.showMessageDialog(barCodeField, "Esse produto já foi registrado nessa venda!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+            barCodeField.setText("");
+            return;
+        }     
+        ConsultaMercadoria consulta = getConfirmMessage(lojaDB, barCodeField.getText().trim());
         if(consulta==null){
             JOptionPane.showMessageDialog(barCodeField, "Não há produto registrado com esse código!", "Aviso", JOptionPane.WARNING_MESSAGE);            
             barCodeField.setText("");
@@ -334,7 +351,7 @@ public class PanelVenda extends javax.swing.JPanel {
         if(status.equals("no estoque")==false){
             String message1="O produto está registrado como \'"+status+"\' , "
                     + "confirmar ele na venda mesmo assim?";
-            int reply1 = JOptionPane.showOptionDialog(null, message1, "Produto com status inválido",
+            int reply1 = JOptionPane.showOptionDialog(barCodeField, message1, "Produto com status inválido",
                 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
             //0 - confirm      1 - nao confirma
             if(reply1==1){
@@ -353,11 +370,13 @@ public class PanelVenda extends javax.swing.JPanel {
             productConfirmed(consulta.mercadoriaMap);            
         barCodeField.setText("");
     }//GEN-LAST:event_barCodeFieldActionPerformed
-    private boolean hasCodeInTable(String code){
-        int len = tableVenda.getRowCount();
-        for(int i=0;i<len;i++)
-            if(elemOfTable(i, 0).equals(code))
+    public static boolean hasCodeInTable(JTable table, String code){
+        int len = table.getRowCount();
+        for(int i=0;i<len;i++){
+            int colOfKey= Main.getIndexColumnWithColumnName(table, "Código");
+            if(elemOfTable(table, i, colOfKey).equals(code))
                 return true;
+        }
         return false;
     }
     private void concluirVendaButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                    
@@ -366,7 +385,7 @@ public class PanelVenda extends javax.swing.JPanel {
         int answ = JOptionPane.showConfirmDialog(concluirVendaButton, "Tem certeza que deseja concluir a venda?", "Tela de confirmação", JOptionPane.OK_CANCEL_OPTION);
         if(answ!=0)
             return; 
-        String descricaoVenda = mountDescricaoVenda();        
+        String descricaoVenda = mountDescricaoVenda(); 
         ConfirmaVendaPanel confirmaVendaPanel = new ConfirmaVendaPanel(lojaDB, this, descricaoVenda);        
         lojaDB.setConfirmaVendaPanelVisible(false);
         lojaDB.setTabbedPaneVisible(false);
@@ -391,14 +410,20 @@ public class PanelVenda extends javax.swing.JPanel {
         double totalDiscount=0;
         String descricao="venda###";
         for(int i=0;i<len;i++){
-            descricao+=elemOfTable(i, 0)+"#";            
-            descricao+=elemOfTable(i, 1)+"#";
-            descricao+=elemOfTable(i, 2)+"#";
-            descricao+=elemOfTable(i, 3)+"#";
-            descricao+=elemOfTable(i, 4)+"#";
-            descricao+=elemOfTable(i, 5)+"##";
-            subTotalValue+=Double.parseDouble(tableVenda.getValueAt(i, 5).toString());
-            totalDiscount+=Double.parseDouble(tableVenda.getValueAt(i, 4).toString());
+            int colOfKey = Main.getIndexColumnWithColumnName(tableVenda, "Código");
+            int colOfType = Main.getIndexColumnWithColumnName(tableVenda, "Tipo");
+            int colOfDesc = Main.getIndexColumnWithColumnName(tableVenda, "Descrição");
+            int colOfSize = Main.getIndexColumnWithColumnName(tableVenda, "Tamanho");
+            int colOfDiscount = Main.getIndexColumnWithColumnName(tableVenda, "Desconto");
+            int colOfValue = Main.getIndexColumnWithColumnName(tableVenda, "Valor");
+            descricao+=elemOfTable(tableVenda, i, colOfKey)+"#";            
+            descricao+=elemOfTable(tableVenda, i, colOfType)+"#";
+            descricao+=elemOfTable(tableVenda, i, colOfDesc)+"#";
+            descricao+=elemOfTable(tableVenda, i, colOfSize)+"#";
+            descricao+=elemOfTable(tableVenda, i, colOfDiscount)+"#";
+            descricao+=elemOfTable(tableVenda, i, colOfValue)+"##";            
+            subTotalValue+=Double.parseDouble(tableVenda.getValueAt(i, colOfValue).toString());
+            totalDiscount+=Double.parseDouble(tableVenda.getValueAt(i, colOfDiscount).toString());
         }
         descricao+="#";
         String subTotalValueSt=Double.toString(subTotalValue);
@@ -413,10 +438,8 @@ public class PanelVenda extends javax.swing.JPanel {
         lojaDB.setTabbedPaneVisible(true);
         frameConfirma.setEnabled(false);
         frameConfirma.dispose();        
-        JOptionPane.showMessageDialog(concluirVendaButton, "Venda realizada com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);            //        
         clean();  
-    }
-    
+    }    
     private void clean(){
         Main.cleanTable(tableVenda);
 //        horaField.setText("");
@@ -425,14 +448,14 @@ public class PanelVenda extends javax.swing.JPanel {
         totalLabel.setText("0");
         this.discountLabel.setText("0");
     }
-    private String createStringOfTransaction(String root){
+    public static String createStringOfTransaction(String root){
         String split3[]= root.split("###");
         String typeOfTransaction=split3[0];
         if(typeOfTransaction.equals("venda"))
             return createStringOfVenda(split3);
         return null;
     }
-    private String createStringOfVenda(String split3[]){        
+    public static String createStringOfVenda(String split3[]){        
         String descricao=split3[0]+":\n\n";
         String products = split3[1];
         String[] split2 = products.split("##");
@@ -444,7 +467,7 @@ public class PanelVenda extends javax.swing.JPanel {
             descricao+="      Tipo: "+ elemOfProduct[1]+"\n";
             descricao+="      Descrição: "+ elemOfProduct[2]+"\n";
             descricao+="      Tamanho: "+ elemOfProduct[3]+"\n";
-            descricao+="      Desconto: "+ elemOfProduct[4]+"\n";
+            descricao+="      Desconto: "+ Main.validateDoubleString(elemOfProduct[4])+"\n";
             descricao+="      Valor: "+ elemOfProduct[5]+"\n\n";
         }
         descricao+="SubTotal: "+ split3[2]+"\n";
@@ -452,11 +475,13 @@ public class PanelVenda extends javax.swing.JPanel {
         descricao+="Total: "+ split3[4]+"\n";
         return descricao;        
     }
-    private String elemOfTable(int row, int col){
-        String elem = tableVenda.getValueAt(row, col).toString();
+    private static String elemOfTable(JTable table, int row, int col){
+        String elem = table.getValueAt(row, col).toString();
         elem = elem.replaceAll("#", "-");
         elem = elem.replaceAll("\"", "-");
         elem = elem.replaceAll("\'", "-");
+        if(elem.equals(""))
+            return " ";
         return elem;
     }
     private boolean isValidSitution(){
@@ -471,7 +496,7 @@ public class PanelVenda extends javax.swing.JPanel {
         return true;
             
     } 
-    class ConsultaMercadoria{
+    static class ConsultaMercadoria{
         String confirmMessage;
         HashMap <String, String> mercadoriaMap;
     }    

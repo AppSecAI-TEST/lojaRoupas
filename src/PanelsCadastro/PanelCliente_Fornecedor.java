@@ -165,20 +165,25 @@ public class PanelCliente_Fornecedor extends javax.swing.JPanel {
         String n=nomeField.getText();
         String cpf=cpfField.getText();
         if(Main.isEmpty(cpf))
-            cpf="null";
+            cpf="";
         String cel1=cel1Field.getText();
         String cel2=cel2Field.getText();
         String fixo=fixoField.getText();
         String end=endField.getText();
         String email=emailField.getText();
         String desc=descField.getText();
+        Object hasClient = lojaDB.getColumnWithColumnKey("Cliente", "Nome_Cliente", "\'"+n+"\'", "*");;
+        if(hasClient != null){
+            JOptionPane.showMessageDialog(null, "Esse nome já está registrado", "Aviso", JOptionPane.WARNING_MESSAGE);   
+            return null;
+        }                        
         String query="";
         if(nameTable.equals("Cliente"))
             query = "INSERT INTO Cliente(Nome_Cliente, Telefone_Celular1, Telefone_Celular2, Telefone_Fixo, Endereco_Cliente, Email_Cliente, CPF_Cliente, Descricao_Cliente)"+
-        " VALUES (\'"+n+"\', \'"+cel1+"\', \'"+cel2+"\', \'"+fixo+"\', \'"+end+"\',\'"+email+"\',"+cpf+",\'"+desc+"\')";
+        " VALUES (\'"+n+"\', \'"+cel1+"\', \'"+cel2+"\', \'"+fixo+"\', \'"+end+"\',\'"+email+"\',\'"+cpf+"\',\'"+desc+"\')";
         if(nameTable.equals("Fornecedor"))
             query = "INSERT INTO Fornecedor(Nome_Fornecedor, Telefone_Celular1, Telefone_Celular2, Telefone_Fixo, Endereco_Fornecedor, Email_Fornecedor, CPF_Fornecedor, Descricao_Fornecedor)"+
-        " VALUES (\'"+n+"\', \'"+cel1+"\', \'"+cel2+"\', \'"+fixo+"\', \'"+end+"\',\'"+email+"\',"+cpf+",\'"+desc+"\')";
+        " VALUES (\'"+n+"\', \'"+cel1+"\', \'"+cel2+"\', \'"+fixo+"\', \'"+end+"\',\'"+email+"\',\'"+cpf+"\',\'"+desc+"\')";
         lojaDB.executeQuery(query);
         JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);
         return n;
@@ -193,24 +198,6 @@ public class PanelCliente_Fornecedor extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, "Deve cadastrar pelo menos um sobrenome", "Aviso", JOptionPane.WARNING_MESSAGE);                                 
             return false;
         }
-        String cpf=cpfField.getText();
-        String cel1=cel1Field.getText();
-        String cel2=cel2Field.getText();
-        String fixo=fixoField.getText();
-        try{
-            if(cpf.equals("")==false)
-                Integer.parseInt(cpf);
-            if(cel1.equals("")==false)
-                Integer.parseInt(cel1);
-            if(cel2.equals("")==false)
-                Integer.parseInt(cel2);
-            if(fixo.equals("")==false)
-                Integer.parseInt(fixo);
-        }
-        catch(Exception e){
-            JOptionPane.showMessageDialog(null, "Os telefones e o cpf não podem conter letras!", "Aviso", JOptionPane.WARNING_MESSAGE);                                             
-            return false;
-        }        
         return true;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

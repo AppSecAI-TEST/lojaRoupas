@@ -1,29 +1,14 @@
--funcao controle de estoque
--funcao troca de "encomendado" para "no estoque"
--ao concluir a venda, dar baixa no estoque
--ao adicionar um produto na venda, verificar se ele está no estoque
--ao mostrar os caixas, calcular as vendas/devolucoes e mostrar tb
-solucao para o programa de penduras
--avisar a minha mae que nao dá pra botar desconto global para facilitar o valor da devolucao
--programar a devolucao de produto nao cadastrado
--ao adicionar um produto na venda, se ele for "Encomendado", perguntar se quer trocar para em estoque e adicioná-lo na vendas
--ao efetuar a venda, dar a opção para escolher entre o usuário que efetuou a venda
--fazer o botão de adicionar cliente funcionar
--ao adicionar ou retirar dinheiro do caixa, criar uma transacao
--trocar o sistema de consulta para consultar sempre que muda o JTextField
+-avisar a mamae que nao dá pra botar desconto global para facilitar o valor da devolucao
 -botar perguntas "tem certeza ...."
--centralizar o conteudo das tabelas
--Conferir sempre a tabela do Caixa, Mercadoria, Transacao
--nao permitir cadastro de clientes com o mesmo nome
--opcao na venda de usar o crédito do cliente
--implementar a finalizacao de venda com cartao de credito, dinheiro ou fiado
--botar os JComboBoxs com Scroll para o caso de muitas opcoes nele
+-centralizar o conteudo das tabelas e acertar a sua largura
+-botar senha para algumas funções
+-mudar tema
+-mostrar soma de todas as mercadorias em estoque e número de mercadorias em "no estoque"
+-mostrar soma de todas as vendas por dia 
+-mostrar soma de todas as vendas por mês
+-mostrar soma de todas as vendas por ano
 
-
-
-
-
-
+lembrar que dá até pra escolher as ordens das colunas com query
 
 venda###1#camisa#a#-#0.10#1.00##2#vestido#e#-#0.60#3.00##3#calça#é#-#0.00#20.40###24.4###0.7###23.7
 

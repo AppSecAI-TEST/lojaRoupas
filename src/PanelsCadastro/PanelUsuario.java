@@ -15,6 +15,12 @@ public class PanelUsuario extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, "O \'nome\' não pode ser vazio", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        Object hasClient = lojaDB.getColumnWithColumnKey("Usuario", "Nome_Usuario", "\'"+n+"\'", "*");;
+        if(hasClient != null){
+            JOptionPane.showMessageDialog(null, "Esse nome já está registrado", "Aviso", JOptionPane.WARNING_MESSAGE);   
+            return;
+        }   
+        
         String d=descField.getText();
         String query = "INSERT INTO Usuario(Nome_Usuario, Descricao_Usuario) VALUES (\'"+
             n+"\',\'"+d+"\')";

@@ -198,6 +198,7 @@ public class PanelVenda extends javax.swing.JPanel {
         }
     }    
     public void update(){
+        barCodeField.requestFocus();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -222,6 +223,7 @@ public class PanelVenda extends javax.swing.JPanel {
 
         jLabel2.setText("Código de barras: ");
 
+        barCodeField.setToolTipText("código de barras da mercadoria a ser vendida");
         barCodeField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 barCodeFieldActionPerformed(evt);
@@ -246,6 +248,7 @@ public class PanelVenda extends javax.swing.JPanel {
         jLabel4.setText("Total: ");
 
         concluirVendaButton.setText("Finalizar Venda  ");
+        concluirVendaButton.setToolTipText("O desconto deve ser dado ANTES de apertar esse botão");
         concluirVendaButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 concluirVendaButtonActionPerformed(evt);

@@ -241,6 +241,7 @@
     <Component class="javax.swing.JCheckBox" name="productNotRegistredCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="devolu&#xe7;&#xe3;o de produto n&#xe3;o cadastrado"/>
+        <Property name="toolTipText" type="java.lang.String" value="O produto a ser devolvido nunca foi cadastrado com um c&#xf3;digo"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="productNotRegistredCheckBoxActionPerformed"/>

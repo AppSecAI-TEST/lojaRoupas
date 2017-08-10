@@ -92,7 +92,7 @@ public class PanelEstatistica extends javax.swing.JPanel {
 
         buttonGroup1.add(diaOption);
         diaOption.setText("dia");
-        diaOption.setToolTipText("digite o dia no formato DD/MM/AA ou DD/MM/AAAA");
+        diaOption.setToolTipText("digite o dia no formato DD ou DD/MM ou DD/MM/AA");
         diaOption.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 diaOptionActionPerformed(evt);
@@ -101,7 +101,7 @@ public class PanelEstatistica extends javax.swing.JPanel {
 
         buttonGroup1.add(mesOption);
         mesOption.setText("mês");
-        mesOption.setToolTipText("Digite o mês no formato MM/AA ou MM/AAAA");
+        mesOption.setToolTipText("Digite o mês no formato MM ou MM/AA");
         mesOption.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mesOptionActionPerformed(evt);
@@ -110,7 +110,7 @@ public class PanelEstatistica extends javax.swing.JPanel {
 
         buttonGroup1.add(anoOption);
         anoOption.setText("ano");
-        anoOption.setToolTipText("Digite o ano no formato AA ou AAAA");
+        anoOption.setToolTipText("Digite o ano no formato AA");
         anoOption.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 anoOptionActionPerformed(evt);
@@ -129,12 +129,14 @@ public class PanelEstatistica extends javax.swing.JPanel {
 
         buttonGroup2.add(orderValorOption);
         orderValorOption.setText("valor");
+        orderValorOption.setToolTipText("ordena por valor vendido");
         orderValorOption.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 orderValorOptionActionPerformed(evt);
             }
         });
 
+        searchField.setToolTipText("digite o dia, mês ou ano");
         searchField.setMinimumSize(new java.awt.Dimension(30, 20));
         searchField.setPreferredSize(new java.awt.Dimension(30, 20));
         searchField.addActionListener(new java.awt.event.ActionListener() {
@@ -144,6 +146,7 @@ public class PanelEstatistica extends javax.swing.JPanel {
         });
 
         somarButton.setText("somar");
+        somarButton.setToolTipText("soma os valores abaixo");
         somarButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 somarButtonActionPerformed(evt);

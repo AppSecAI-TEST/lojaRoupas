@@ -117,6 +117,7 @@
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="text" type="java.lang.String" value="Tipo Mercadoria*: "/>
+        <Property name="toolTipText" type="java.lang.String" value="Obrigat&#xf3;rio selecionar (Selecione com cuidado)"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="precoField">
@@ -132,6 +133,7 @@
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" value="Tamanho: "/>
+        <Property name="toolTipText" type="java.lang.String" value="Deve ser um n&#xfa;mero de at&#xe9; 3 d&#xed;gitos"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="tamField">
@@ -189,6 +191,7 @@
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
         <Property name="text" type="java.lang.String" value="Descricao*: "/>
+        <Property name="toolTipText" type="java.lang.String" value="Campo mais importante"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="descField">

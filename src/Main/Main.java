@@ -1,4 +1,5 @@
 package Main;
+import auxClasses.BackupDB;
 import auxClasses.RequestFocusListener;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -44,12 +45,14 @@ public class Main {
     static long time = -1;
     static DateAndHour myDateAndHour;
     static int secondsToWaitTimeServer = 1;
-    Main() {   
+    boolean flagPassword = true;
+    public Main() {   
         pathConnection = getPathConnection("CriancaBonitaDB");
-        if(askPassword(null, false)==false)   {
+        if(flagPassword && askPassword(null, false)==false)   {
             close_connection(pathConnection.connection, pathConnection.statement);
             System.exit(0);
-        }     
+        }             
+        runBackup();
         tabbedFrame = new JTabbedPaneFrame(this);
         tabbedFrame.setVisible(true);
         tabbedFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -71,6 +74,11 @@ public class Main {
         // connect to database books and query database 
         while(tabbedFrame.isEnabled()){}       
         close_connection(pathConnection.connection, pathConnection.statement);        
+    }
+    public Main(boolean flagPass){
+        flagPassword=flagPass;
+        pathConnection = getPathConnection("CriancaBonitaDB");  
+        runBackup();
     }
     public boolean askPassword(Component c, boolean flagAdmin ){
         String title = "Senha necessária";
@@ -331,9 +339,8 @@ public class Main {
         DefaultTableModel model=(DefaultTableModel)table.getModel();
         model.removeRow(row);
     }  
-    public ResultSet executeQuery(String query){
+    public static ResultSet executeQuery(Statement statement, String query){
         //query=prepareToDB(query);
-        Statement statement=pathConnection.statement;
         try {
             String operacao = query.split(" ")[0];
             // query database with insert
@@ -352,6 +359,11 @@ public class Main {
             exception.printStackTrace();
             return null;
         } // end catch
+    }    
+    public ResultSet executeQuery(String query){
+        //query=prepareToDB(query);
+        Statement statement=pathConnection.statement;
+        return Main.executeQuery(statement, query);        
     }
     public void updateSQL(JTable table, String tableName, int row, int col){
         if(tableName.equals("Penduras"))
@@ -374,11 +386,12 @@ public class Main {
         if(nameColumn.equals("Saldo")){
             String message="Para um melhor controle do caixa, aconselha-se alterar o saldo do \ncliente mediante adição ou retirada do caixa na aba \'Caixa\'.\n"
                     + "Deseja realmente continuar?";
-            int answ = JOptionPane.showConfirmDialog(table, message, "Atenção!!!", JOptionPane.OK_CANCEL_OPTION);
+            String options[]=new String[]{"Entendo o risco e quero mudar mesmo assim", "voltar"};
+            
+            int answ = JOptionPane.showOptionDialog(table, message, "Atenção!!!", 
+                    JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
                 if (answ != 0) 
                     return;
-            if(askPassword(null, true)==false)   
-                return;
         }
         if(nameColumn.equals("Status"))
             newValue=newValue.toLowerCase();
@@ -395,7 +408,7 @@ public class Main {
             if(askPassword(null, true)==false)   
                 return;
         }
-        String adminColumns[]=new String[]{"Nome", "CPF", "Saldo", "Telefone_Celular1", "Usuario", "Descricao"};
+        String adminColumns[]=new String[]{"Nome", "CPF", "Saldo", "Telefone_Celular1", "Usuario", "Descricao", "TipoMercadoria"};
         if(contains(adminColumns, nameColumn))
             if(askPassword(null, true)==false)   
                 return;
@@ -483,6 +496,14 @@ public class Main {
             }
             return true;
         }
+        if(nameColumn.equals("TipoMercadoria") ){ 
+            String query = "Select ID_TipoMercadoria FROM TipoMercadoria where Descricao_TipoMercadoria =\'"+newValue+"\'";
+            if(getUniqueValueOfQuery(query)==null){
+                JOptionPane.showMessageDialog(table, "Tipo inválido", "Aviso", JOptionPane.WARNING_MESSAGE);    
+                return false;
+            }               
+            return true;
+        }
         return true;
     }
     private boolean isEditableColumn(String tableName, String nameColumn){
@@ -498,7 +519,7 @@ public class Main {
                 return true;
         }        
         if(tableName.equals("Mercadoria")){
-            String [] editableColumns =new String[]{"Status", "Descricao", "Tamanho_est", "Tamanho", "Observacao", "Preço"};
+            String [] editableColumns =new String[]{"TipoMercadoria", "Status", "Descricao", "Tamanho_est", "Tamanho", "Observacao", "Preço"};
             if(contains(editableColumns, nameColumn))
                 return true;
         }     
@@ -654,6 +675,12 @@ public class Main {
     }
     public static void p(Object s){
         System.out.println(s);
+    }
+    public static void p(Object[] array){
+        String s="";
+        for(int i=0;i<array.length;i++)
+            s+=i+": "+array[i]+" \n";
+        Main.p(s);
     }
     public static String SqlDateToNormalFormat(String dataInSqlFormat){
         if(dataInSqlFormat==null)
@@ -1001,9 +1028,16 @@ public class Main {
     public String getColumnWithPrimaryKey(String tableName, String primaryKey, String nameColumn){
         return getColumnWithColumnKey(tableName, "ID_"+tableName, primaryKey, nameColumn);        
     }
-    class PathConnection {
-        Connection connection; // manages connection
-        Statement statement;
+    public void runBackup(){
+        new Thread(){
+            public void run(){
+                new BackupDB(pathConnection);
+            }
+        }.start();
+    }
+    public class PathConnection {
+        public Connection connection; // manages connection
+        public Statement statement;
 
         PathConnection (Connection connect, Statement stat)        
         {

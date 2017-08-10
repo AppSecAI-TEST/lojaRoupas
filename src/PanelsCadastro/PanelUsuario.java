@@ -42,6 +42,7 @@ public class PanelUsuario extends javax.swing.JPanel {
         descField = new javax.swing.JTextField();
 
         jLabel1.setText("Nome Completo*: ");
+        jLabel1.setToolTipText("Pelo menos um sobrenome");
 
         jLabel2.setText("Descrição: ");
 

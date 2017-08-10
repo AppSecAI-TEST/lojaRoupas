@@ -94,6 +94,7 @@
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="text" type="java.lang.String" value="Nome Completo*:"/>
+        <Property name="toolTipText" type="java.lang.String" value="Pelo menos um sobrenome"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="nomeField">
@@ -101,6 +102,7 @@
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" value="Cel 1:"/>
+        <Property name="toolTipText" type="java.lang.String" value="O mais importante dos telefones"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="cel1Field">

@@ -97,6 +97,7 @@
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" value="Mercadorias ainda n&#xe3;o encontradas: "/>
+        <Property name="toolTipText" type="java.lang.String" value="mercadorias possivelmente perdidas"/>
       </Properties>
     </Component>
     <Container class="javax.swing.JPanel" name="tableNotRegistredPanel">
@@ -117,11 +118,13 @@
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>
         <Property name="text" type="java.lang.String" value="C&#xf3;digos de mercadorias N&#xc3;O CADASTRADAS: "/>
+        <Property name="toolTipText" type="java.lang.String" value="mercadorias guardadas numa pilha para posterior cadastro"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="jCheckBox1">
       <Properties>
         <Property name="text" type="java.lang.String" value="confer&#xea;ncia incompleta"/>
+        <Property name="toolTipText" type="java.lang.String" value="Considera que o c&#xf3;digo nunca foi utilizado em outra mercadoria"/>
       </Properties>
     </Component>
   </SubComponents>

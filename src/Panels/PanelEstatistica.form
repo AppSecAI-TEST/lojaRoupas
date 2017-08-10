@@ -121,7 +121,7 @@
           <ComponentRef name="buttonGroup1"/>
         </Property>
         <Property name="text" type="java.lang.String" value="dia"/>
-        <Property name="toolTipText" type="java.lang.String" value="digite o dia no formato DD/MM/AA ou DD/MM/AAAA"/>
+        <Property name="toolTipText" type="java.lang.String" value="digite o dia no formato DD ou DD/MM ou DD/MM/AA"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="diaOptionActionPerformed"/>
@@ -133,7 +133,7 @@
           <ComponentRef name="buttonGroup1"/>
         </Property>
         <Property name="text" type="java.lang.String" value="m&#xea;s"/>
-        <Property name="toolTipText" type="java.lang.String" value="Digite o m&#xea;s no formato MM/AA ou MM/AAAA"/>
+        <Property name="toolTipText" type="java.lang.String" value="Digite o m&#xea;s no formato MM ou MM/AA"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mesOptionActionPerformed"/>
@@ -145,7 +145,7 @@
           <ComponentRef name="buttonGroup1"/>
         </Property>
         <Property name="text" type="java.lang.String" value="ano"/>
-        <Property name="toolTipText" type="java.lang.String" value="Digite o ano no formato AA ou AAAA"/>
+        <Property name="toolTipText" type="java.lang.String" value="Digite o ano no formato AA"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="anoOptionActionPerformed"/>
@@ -173,6 +173,7 @@
           <ComponentRef name="buttonGroup2"/>
         </Property>
         <Property name="text" type="java.lang.String" value="valor"/>
+        <Property name="toolTipText" type="java.lang.String" value="ordena por valor vendido"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="orderValorOptionActionPerformed"/>
@@ -180,6 +181,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="searchField">
       <Properties>
+        <Property name="toolTipText" type="java.lang.String" value="digite o dia, m&#xea;s ou ano"/>
         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
           <Dimension value="[30, 20]"/>
         </Property>
@@ -194,6 +196,7 @@
     <Component class="javax.swing.JButton" name="somarButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="somar"/>
+        <Property name="toolTipText" type="java.lang.String" value="soma os valores abaixo"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="somarButtonActionPerformed"/>

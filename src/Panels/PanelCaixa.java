@@ -191,6 +191,7 @@ public class PanelCaixa extends javax.swing.JPanel {
         });
 
         verCaixaAtualButton.setText("Ver caixa atual");
+        verCaixaAtualButton.setToolTipText("Ver valor em dinheiro no caixa");
         verCaixaAtualButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 verCaixaAtualButtonActionPerformed(evt);
@@ -198,7 +199,7 @@ public class PanelCaixa extends javax.swing.JPanel {
         });
 
         adicionarDinheiroButton.setText("Adicionar ao caixa/ Recebimento de penduras");
-        adicionarDinheiroButton.setToolTipText("Também usado se o cliente esteja devendo 20 reais e queira pagar uma parte");
+        adicionarDinheiroButton.setToolTipText("Também usado se o cliente está devendo 20 reais e queira pagar uma parte");
         adicionarDinheiroButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 adicionarDinheiroButtonActionPerformed(evt);
@@ -243,6 +244,7 @@ public class PanelCaixa extends javax.swing.JPanel {
         idCaixaLabel.setText("0");
 
         somenteCaixaAtualCheckBox.setText("Mostrar somente transações do caixa atual ");
+        somenteCaixaAtualCheckBox.setToolTipText("desmarque para ver as transações de todos os caixas");
         somenteCaixaAtualCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 somenteCaixaAtualCheckBoxActionPerformed(evt);
@@ -394,7 +396,7 @@ public class PanelCaixa extends javax.swing.JPanel {
         String input = panel.getValue();
         String data = panel.getData();
         String hora = panel.getHora();
-        if (Main.isDoubleValid(input) == false || Main.formatDoubleString(input) < 0) {
+        if (Main.isDoubleValid(input) == false || Main.formatDoubleString(input) <= 0) {
             JOptionPane.showMessageDialog(null, "Valor inválido!", "Aviso", JOptionPane.WARNING_MESSAGE);
             return false;
         }
@@ -444,7 +446,7 @@ public class PanelCaixa extends javax.swing.JPanel {
             data = fecharCaixaPanel.getData();
             hora = fecharCaixaPanel.getHora();
             caixaInformado = fecharCaixaPanel.getCaixaInformado();
-            if (isValidFechamento(fecharCaixaPanel)) {
+            if (isValidFechamento(fecharCaixaPanel, caixaCalculado)) {
                 break;
             }
             fecharCaixaPanel = new FechamentoCaixaPanel(caixaCalculado, caixaInformado, data, hora, obs);
@@ -463,6 +465,7 @@ public class PanelCaixa extends javax.swing.JPanel {
         hora = Main.formatStringToSql("Time", hora);
         double caixaInf = Main.formatDoubleString(caixaInformado);
         double caixaCalc = Main.formatDoubleString(caixaCalculado);
+        
         String quebraDeCaixa = Main.twoDig(caixaInf - caixaCalc);
         String query = "UPDATE Caixa SET Status = 'fechado', Data_Fechamento = " + data + " , Hora_Fechamento = " + hora
                 + " , FinalInformado = " + caixaInformado + " , Observacao = \'" + obs + "\' , QuebraDeCaixa = "
@@ -481,13 +484,13 @@ public class PanelCaixa extends javax.swing.JPanel {
         }
         return date;
     }
-    public boolean isValidFechamento(FechamentoCaixaPanel panel) {
+    public boolean isValidFechamento(FechamentoCaixaPanel panel, String caixaCalculado) {
         String caixaInformado = panel.getCaixaInformado();        
         String data = panel.getData();
         data = completeDate(data);
         String hora = panel.getHora();
         caixaInformado=caixaInformado.trim();        
-        if (caixaInformado.isEmpty() || Main.isDoubleValid(caixaInformado) == false || Main.formatDoubleString(caixaInformado) < 0) {
+        if (caixaInformado.isEmpty() || Main.isDoubleValid(caixaInformado) == false ) {
             JOptionPane.showMessageDialog(null, "Valor inválido!", "Aviso", JOptionPane.WARNING_MESSAGE);
             return false;
         }
@@ -498,6 +501,17 @@ public class PanelCaixa extends javax.swing.JPanel {
         if (Main.isTimeValid(hora) == false) {
             JOptionPane.showMessageDialog(null, "Hora inválida!", "Aviso", JOptionPane.WARNING_MESSAGE);
             return false;
+        }
+        caixaInformado = panel.getCaixaInformado();
+        double caixaInf = Main.formatDoubleString(caixaInformado);
+        double caixaCalc = Main.formatDoubleString(caixaCalculado);
+        String quebraDeCaixa = Main.twoDig(caixaInf - caixaCalc);
+        if(Math.abs(caixaInf - caixaCalc) >0.1){
+            String options[]=new String[]{"Fechar assim mesmo", "Voltar"};
+            int reply1 = JOptionPane.showOptionDialog(panel, "Tem certeza que deseja fechar com uma quebra de caixa de "+quebraDeCaixa+" reais", "Atenção!",
+                  JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+            if(reply1!=0)   
+                return false;
         }
         return true;
     }
@@ -513,6 +527,11 @@ public class PanelCaixa extends javax.swing.JPanel {
     }//GEN-LAST:event_verCaixaAtualButtonActionPerformed
 
     private void somenteCaixaAtualCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_somenteCaixaAtualCheckBoxActionPerformed
+        if(somenteCaixaAtualCheckBox.isSelected()==false)
+            if(lojaDB.askPassword(null, true)==false){
+                somenteCaixaAtualCheckBox.setSelected(true);
+                return;
+            }         
         update();
     }//GEN-LAST:event_somenteCaixaAtualCheckBoxActionPerformed
     private boolean isValidEntry(AbrirCaixaPanel abrirPanel) {
@@ -623,11 +642,12 @@ public class PanelCaixa extends javax.swing.JPanel {
     public void update() {
         lojaDB.setBooleanCaixaAberto();
         setLabelsCaixa();
-        if(somenteCaixaAtualCheckBox.isSelected()){
+        Main.cleanTable(tableCaixa);        
+        if(somenteCaixaAtualCheckBox.isSelected() && lojaDB.caixaAberto){
             ResultSet results = lojaDB.executeQuery("SELECT * FROM Transacao where ID_Caixa = " + lojaDB.getOfCaixa("ID_Caixa")+" ORDER BY ID_Caixa DESC, Data_Transacao DESC, Hora_Transacao DESC");
             lojaDB.updateTable(tableCaixa, tableCaixaPanel, "Transacao", true, results);
         }
-        else{
+        else if(somenteCaixaAtualCheckBox.isSelected()==false){
             ResultSet results = lojaDB.executeQuery("SELECT * FROM Transacao ORDER BY ID_Caixa DESC, Data_Transacao DESC, Hora_Transacao DESC");            
             lojaDB.updateTable(tableCaixa, tableCaixaPanel, "Transacao", true, results);
         }

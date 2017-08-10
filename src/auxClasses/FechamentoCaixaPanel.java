@@ -28,10 +28,11 @@ public class FechamentoCaixaPanel extends javax.swing.JPanel {
         jLabel5 = new javax.swing.JLabel();
         obsField = new javax.swing.JTextField();
 
-        jLabel1.setText("Informe o saldo final em caixa: ");
+        jLabel1.setText("Informe o saldo final em dinheiro no caixa: ");
+        jLabel1.setToolTipText("Conte o dinheiro no caixa e informe aqui");
 
         jLabel2.setText("Totalização em dinheiro  no sistema: ");
-        jLabel2.setToolTipText("Aperte \"ver caixa\" para maiores informações");
+        jLabel2.setToolTipText("Volte e aperte \"ver caixa\" para maiores informações");
 
         jLabel3.setText("Data: ");
 
@@ -100,8 +101,8 @@ public class FechamentoCaixaPanel extends javax.swing.JPanel {
         dataField.setText(data);
         horaField.setText(hora);
         obsField.setText(obs);
-        if(data==null)
-            Main.setDateAndHour(dataField, horaField);
+        Main.setDateAndHour(dataField, horaField);
+        caixaInformadoField.addAncestorListener( new RequestFocusListener() );
     }
     public String getData(){
         return dataField.getText();

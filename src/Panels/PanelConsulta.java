@@ -238,6 +238,7 @@ public class PanelConsulta extends javax.swing.JPanel {
         });
 
         estoqueButton.setText("estoque total");
+        estoqueButton.setToolTipText("ver algumas informações do estoque total da loja");
         estoqueButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 estoqueButtonActionPerformed(evt);
@@ -247,6 +248,7 @@ public class PanelConsulta extends javax.swing.JPanel {
         jLabel3.setText("Resultados: ");
 
         somarButton.setText("Somar");
+        somarButton.setToolTipText("Somar dos resultados abaixo os saldos dos clientes ou valor das mercadorias");
         somarButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 somarButtonActionPerformed(evt);

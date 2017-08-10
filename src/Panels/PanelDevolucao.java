@@ -287,6 +287,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
         jLabel2.setText("Clique no produto a ser devolvido:");
 
         productNotRegistredCheckBox.setText("devolução de produto não cadastrado");
+        productNotRegistredCheckBox.setToolTipText("O produto a ser devolvido nunca foi cadastrado com um código");
         productNotRegistredCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 productNotRegistredCheckBoxActionPerformed(evt);

@@ -131,6 +131,7 @@
     <Component class="javax.swing.JButton" name="verCaixaAtualButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Ver caixa atual"/>
+        <Property name="toolTipText" type="java.lang.String" value="Ver valor em dinheiro no caixa"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="verCaixaAtualButtonActionPerformed"/>
@@ -139,7 +140,7 @@
     <Component class="javax.swing.JButton" name="adicionarDinheiroButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Adicionar ao caixa/ Recebimento de penduras"/>
-        <Property name="toolTipText" type="java.lang.String" value="Tamb&#xe9;m usado se o cliente esteja devendo 20 reais e queira pagar uma parte"/>
+        <Property name="toolTipText" type="java.lang.String" value="Tamb&#xe9;m usado se o cliente est&#xe1; devendo 20 reais e queira pagar uma parte"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="adicionarDinheiroButtonActionPerformed"/>
@@ -217,6 +218,7 @@
     <Component class="javax.swing.JCheckBox" name="somenteCaixaAtualCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="Mostrar somente transa&#xe7;&#xf5;es do caixa atual "/>
+        <Property name="toolTipText" type="java.lang.String" value="desmarque para ver as transa&#xe7;&#xf5;es de todos os caixas"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="somenteCaixaAtualCheckBoxActionPerformed"/>

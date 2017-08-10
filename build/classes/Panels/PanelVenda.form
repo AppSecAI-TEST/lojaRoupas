@@ -94,6 +94,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="barCodeField">
+      <Properties>
+        <Property name="toolTipText" type="java.lang.String" value="c&#xf3;digo de barras da mercadoria a ser vendida"/>
+      </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="barCodeFieldActionPerformed"/>
       </Events>
@@ -131,6 +134,7 @@
     <Component class="javax.swing.JButton" name="concluirVendaButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Finalizar Venda  "/>
+        <Property name="toolTipText" type="java.lang.String" value="O desconto deve ser dado ANTES de apertar esse bot&#xe3;o"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="concluirVendaButtonActionPerformed"/>

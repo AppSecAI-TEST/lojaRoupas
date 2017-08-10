@@ -42,8 +42,8 @@ public class AddOrRemovePanel extends javax.swing.JPanel {
             clientBox.setSelectedIndex(indexSelected);
             recebimento_retirarSaldoCheckBox.setSelected(true);
         }
-        if(dField==null)
-            Main.setDateAndHour(dataField, horaField);
+        Main.setDateAndHour(dataField, horaField);
+        mainField.addAncestorListener( new RequestFocusListener() );
     }
     public void setToolTip(String text){
         recebimento_retirarSaldoCheckBox.setToolTipText(text);
@@ -128,6 +128,7 @@ public class AddOrRemovePanel extends javax.swing.JPanel {
         mainLabel.setText("Valor: ");
 
         recebimento_retirarSaldoCheckBox.setText("recebimento_retirarSaldo");
+        recebimento_retirarSaldoCheckBox.setToolTipText("");
         recebimento_retirarSaldoCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 recebimento_retirarSaldoCheckBoxActionPerformed(evt);

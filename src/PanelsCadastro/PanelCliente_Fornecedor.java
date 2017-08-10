@@ -50,8 +50,10 @@ public class PanelCliente_Fornecedor extends javax.swing.JPanel {
         descField = new javax.swing.JTextField();
 
         jLabel1.setText("Nome Completo*:");
+        jLabel1.setToolTipText("Pelo menos um sobrenome");
 
         jLabel2.setText("Cel 1:");
+        jLabel2.setToolTipText("O mais importante dos telefones");
 
         cel1Field.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

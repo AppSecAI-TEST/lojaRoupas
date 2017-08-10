@@ -239,6 +239,7 @@
     <Component class="javax.swing.JLabel" name="creditoDevolLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Utilizar do saldo do cliente: "/>
+        <Property name="toolTipText" type="java.lang.String" value="Utilizar algum cr&#xe9;dito que o cliente tenha adquirido em alguma devolu&#xe7;&#xe3;o"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel8">
@@ -294,6 +295,7 @@
     <Component class="javax.swing.JCheckBox" name="creditoDevolCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="saldo do cliente"/>
+        <Property name="toolTipText" type="java.lang.String" value="Utilizar algum cr&#xe9;dito que o cliente tenha por ter devolvido alguma roupa"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="creditoDevolCheckBoxActionPerformed"/>
@@ -331,6 +333,7 @@
             <StringItem index="3" value="Item 4"/>
           </StringArray>
         </Property>
+        <Property name="toolTipText" type="java.lang.String" value="Obrigat&#xf3;rio. (Caso seja um cliente n&#xe3;o cadastrado, adicione-o agora)"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -352,6 +355,7 @@
     <Component class="javax.swing.JButton" name="addClientButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="adicionar cliente "/>
+        <Property name="toolTipText" type="java.lang.String" value="Caso o cliente n&#xe3;o esteja ainda cadastrado"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addClientButtonActionPerformed"/>

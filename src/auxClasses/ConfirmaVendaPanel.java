@@ -143,6 +143,7 @@ public class ConfirmaVendaPanel extends javax.swing.JPanel {
         jLabel6.setText("Total a pagar: ");
 
         creditoDevolLabel.setText("Utilizar do saldo do cliente: ");
+        creditoDevolLabel.setToolTipText("Utilizar algum crédito que o cliente tenha adquirido em alguma devolução");
 
         jLabel8.setText("Data*: ");
 
@@ -174,6 +175,7 @@ public class ConfirmaVendaPanel extends javax.swing.JPanel {
         });
 
         creditoDevolCheckBox.setText("saldo do cliente");
+        creditoDevolCheckBox.setToolTipText("Utilizar algum crédito que o cliente tenha por ter devolvido alguma roupa");
         creditoDevolCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 creditoDevolCheckBoxActionPerformed(evt);
@@ -189,6 +191,7 @@ public class ConfirmaVendaPanel extends javax.swing.JPanel {
         clientInFieldLabel.setText("Cliente: ");
 
         clienteInBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        clienteInBox.setToolTipText("Obrigatório. (Caso seja um cliente não cadastrado, adicione-o agora)");
 
         concluirButton.setText("Concluir venda");
         concluirButton.addActionListener(new java.awt.event.ActionListener() {
@@ -200,6 +203,7 @@ public class ConfirmaVendaPanel extends javax.swing.JPanel {
         total_a_pagarLabel.setText("0.00");
 
         addClientButton.setText("adicionar cliente ");
+        addClientButton.setToolTipText("Caso o cliente não esteja ainda cadastrado");
         addClientButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addClientButtonActionPerformed(evt);

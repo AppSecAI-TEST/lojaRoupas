@@ -4,7 +4,8 @@
 -guardar queries num arquivo e ficar mandando para a internet, além disso cada vez que fechar o caixa dar um select em todas as tabelas e guardar na internet
 -cadastrar os resultados anteriores em caixas
 -lembrar que dá até pra escolher as ordens das colunas com query
-
+-botar foco em tudo
+-mudar a senha do banco de dados para 261287 e utilizar essa senha também no código para conectar no DB e assim evitar utilizar minha senha no código.
 venda###1#camisa#a#-#0.10#1.00##2#vestido#e#-#0.60#3.00##3#calça#é#-#0.00#20.40###24.4###0.7###23.7
 
 

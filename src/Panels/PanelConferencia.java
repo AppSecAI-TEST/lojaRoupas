@@ -168,6 +168,7 @@ public class PanelConferencia extends javax.swing.JPanel {
         );
 
         jLabel2.setText("Mercadorias ainda não encontradas: ");
+        jLabel2.setToolTipText("mercadorias possivelmente perdidas");
 
         javax.swing.GroupLayout tableNotRegistredPanelLayout = new javax.swing.GroupLayout(tableNotRegistredPanel);
         tableNotRegistredPanel.setLayout(tableNotRegistredPanelLayout);
@@ -181,8 +182,10 @@ public class PanelConferencia extends javax.swing.JPanel {
         );
 
         jLabel3.setText("Códigos de mercadorias NÃO CADASTRADAS: ");
+        jLabel3.setToolTipText("mercadorias guardadas numa pilha para posterior cadastro");
 
         jCheckBox1.setText("conferência incompleta");
+        jCheckBox1.setToolTipText("Considera que o código nunca foi utilizado em outra mercadoria");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

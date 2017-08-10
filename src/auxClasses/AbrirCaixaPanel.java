@@ -21,8 +21,8 @@ public class AbrirCaixaPanel extends javax.swing.JPanel {
         dataField.setText(dField);
         horaField.setText(hField);
         valorField.setText(valField);
-        if(dField==null)
-            Main.setDateAndHour(dataField, horaField);
+        Main.setDateAndHour(dataField, horaField);
+        valorField.addAncestorListener( new RequestFocusListener() );
     }
     public String getData(){
         return dataField.getText();

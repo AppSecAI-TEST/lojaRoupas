@@ -80,7 +80,8 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Informe o saldo final em caixa: "/>
+        <Property name="text" type="java.lang.String" value="Informe o saldo final em dinheiro no caixa: "/>
+        <Property name="toolTipText" type="java.lang.String" value="Conte o dinheiro no caixa e informe aqui"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="caixaInformadoField">
@@ -88,7 +89,7 @@
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
         <Property name="text" type="java.lang.String" value="Totaliza&#xe7;&#xe3;o em dinheiro  no sistema: "/>
-        <Property name="toolTipText" type="java.lang.String" value="Aperte &quot;ver caixa&quot; para maiores informa&#xe7;&#xf5;es"/>
+        <Property name="toolTipText" type="java.lang.String" value="Volte e aperte &quot;ver caixa&quot; para maiores informa&#xe7;&#xf5;es"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">

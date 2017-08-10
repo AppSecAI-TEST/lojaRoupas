@@ -65,10 +65,10 @@ public class PanelMercadoria extends javax.swing.JPanel {
         if(d.equals("")){
             JOptionPane.showMessageDialog(null, "A descrição não pode estar vazia", "Aviso", JOptionPane.WARNING_MESSAGE);
             return false;
-        }
-        String m=tipoMercadoriaBox.getSelectedItem().toString();
+        }        
+        int m = tipoMercadoriaBox.getSelectedIndex();
         String e=estimativaBox.getSelectedItem().toString();
-        if(m.equals("Escolha o tipo")){
+        if(m==0){
             JOptionPane.showMessageDialog(null, "Escolha o tipo de mercadoria", "Aviso", JOptionPane.WARNING_MESSAGE);
             return false;
         }
@@ -133,6 +133,7 @@ public class PanelMercadoria extends javax.swing.JPanel {
         jLabel7.setText("Estimativa tamanho: ");
 
         jLabel1.setText("Tipo Mercadoria*: ");
+        jLabel1.setToolTipText("Obrigatório selecionar (Selecione com cuidado)");
 
         precoField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -147,6 +148,7 @@ public class PanelMercadoria extends javax.swing.JPanel {
         });
 
         jLabel2.setText("Tamanho: ");
+        jLabel2.setToolTipText("Deve ser um número de até 3 dígitos");
 
         tamField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -161,6 +163,7 @@ public class PanelMercadoria extends javax.swing.JPanel {
         statusBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "no estoque", "encomendado" }));
 
         jLabel6.setText("Descricao*: ");
+        jLabel6.setToolTipText("Campo mais importante");
 
         jLabel8.setText("Código de barras*: ");
 

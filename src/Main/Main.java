@@ -1,4 +1,5 @@
 package Main;
+import auxClasses.RequestFocusListener;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -23,6 +24,10 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import java.net.InetAddress;
 import java.util.Date;
+import javax.swing.Box;
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import org.apache.commons.net.ntp.NTPUDPClient; 
@@ -41,6 +46,10 @@ public class Main {
     static int secondsToWaitTimeServer = 1;
     Main() {   
         pathConnection = getPathConnection("CriancaBonitaDB");
+        if(askPassword(null, false)==false)   {
+            close_connection(pathConnection.connection, pathConnection.statement);
+            System.exit(0);
+        }     
         tabbedFrame = new JTabbedPaneFrame(this);
         tabbedFrame.setVisible(true);
         tabbedFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -63,12 +72,56 @@ public class Main {
         while(tabbedFrame.isEnabled()){}       
         close_connection(pathConnection.connection, pathConnection.statement);        
     }
-  
+    public boolean askPassword(Component c, boolean flagAdmin ){
+        String title = "Senha necessária";
+        String message = "Digite a senha: ";
+        if(flagAdmin){
+            title = "Senha de administrador necessária";
+            message = "Digite a senha de administrador: ";
+        }
+        JPasswordField jpf = new JPasswordField(24);
+        JLabel jl = new JLabel(message);
+        Box box = Box.createHorizontalBox();
+        box.add(jl);
+        box.add(jpf);
+        jpf.addAncestorListener( new RequestFocusListener() );
+        int answ = JOptionPane.showConfirmDialog(null, box, title, JOptionPane.OK_CANCEL_OPTION);
+        if (answ != JOptionPane.OK_OPTION) 
+          return false;
+        char[] triedChars = jpf.getPassword();
+        String tried =new String(triedChars);
+        String query = "Select Tipo_Senha from Senha WHERE String_Senha = \'"+tried+"\'";
+        String Tipo_Senha = getUniqueValueOfQuery(query);
+        if(Tipo_Senha==null){
+            JOptionPane.showMessageDialog(c, "Senha incorreta");
+            return false;
+        }            
+        if(Tipo_Senha.equals("1"))
+            return true;
+        if(Tipo_Senha.equals("2")){
+            if(flagAdmin){
+                JOptionPane.showMessageDialog(c, "A senha de administrador não é essa!");
+                return false;
+            }
+            else
+                return true;
+        }
+        Main.p("Não era pra chegar aqui");
+        return false;
+    }
     public void setTabbedPaneVisible(boolean flag){
         tabbedFrame.setVisible(flag);
     }
     public void setConfirmaVendaPanelVisible(boolean flag){
         tabbedFrame.setConfirmaVendaPanelVisible(flag);
+    }
+    public static int getIndexOfTabWithName(JTabbedPane tabs, String name){
+        int len = tabs.getTabCount();
+        int index = -1;
+        for(int i=0;i<len;i++)
+            if(tabs.getTitleAt(i).equals(name))
+                return i;
+        return -1;
     }
     public static boolean isDateValid(String date) {        
         if(date.contains("/"))
@@ -324,6 +377,8 @@ public class Main {
             int answ = JOptionPane.showConfirmDialog(table, message, "Atenção!!!", JOptionPane.OK_CANCEL_OPTION);
                 if (answ != 0) 
                     return;
+            if(askPassword(null, true)==false)   
+                return;
         }
         if(nameColumn.equals("Status"))
             newValue=newValue.toLowerCase();
@@ -337,7 +392,13 @@ public class Main {
             int answ = JOptionPane.showConfirmDialog(table, "Alterar essa valor pode ser perigoso, deseja alterar assim mesmo?", "Cuidado!", JOptionPane.OK_CANCEL_OPTION);
             if (answ != 0) 
                 return;
+            if(askPassword(null, true)==false)   
+                return;
         }
+        String adminColumns[]=new String[]{"Nome", "CPF", "Saldo", "Telefone_Celular1", "Usuario", "Descricao"};
+        if(contains(adminColumns, nameColumn))
+            if(askPassword(null, true)==false)   
+                return;
         String query ="UPDATE "+tableName+" SET "+ returnToSQLNameCol(tableName, nameColumn)+" = "+ newValue+" WHERE ID_"+tableName+" = "+primaryKey;
         executeQuery(query);
     }
@@ -525,8 +586,11 @@ public class Main {
         int nRows = table.getRowCount();
         int nCols = table.getColumnCount();
         String message="";
-        for(int j=0;j<nCols;j++)
-            message+=table.getColumnName(j)+":   "+table.getValueAt(row, j)+"\n";        
+        for(int j=0;j<nCols;j++){
+            Object value = table.getValueAt(row, j);
+            if(value!=null)
+                message+=table.getColumnName(j)+":   "+table.getValueAt(row, j)+"\n";
+        }                    
         JOptionPane.showMessageDialog(table, message);
     }  
     public static void main(String args[]) {

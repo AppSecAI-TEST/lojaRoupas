@@ -67,11 +67,28 @@ public class PanelCaixa extends javax.swing.JPanel {
             int indexColumnTipo = Main.getIndexColumnWithColumnName(tableCaixa, "Tipo");
             String tipo = tableCaixa.getValueAt(row, indexColumnTipo).toString();
             String formatDesc = "";
-            int indexColumnDinheiro, indexColumnSaldo, indexColumnDesc;
+            int indexColumnDinheiro, indexColumnSaldo, indexColumnDesc, indexColumnCartao, indexColumnFiado;
 
             if (tipo.equals("venda")) {
+                indexColumnDinheiro = Main.getIndexColumnWithColumnName(tableCaixa, "Dinheiro");
+                indexColumnCartao = Main.getIndexColumnWithColumnName(tableCaixa, "Cartao");
+                indexColumnFiado = Main.getIndexColumnWithColumnName(tableCaixa, "Fiado");
+                indexColumnSaldo = Main.getIndexColumnWithColumnName(tableCaixa, "No saldo do cliente");                
                 String descricao = lojaDB.getColumnWithColumnKey("transacao", "ID_Transacao", idTransacao, "Descricao_Transacao");
+                String dinheiro = Main.elemOfTable(tableCaixa, row, indexColumnDinheiro);
+                String comSaldoCliente = Main.elemOfTable(tableCaixa, row, indexColumnSaldo);
+                String cartao = Main.elemOfTable(tableCaixa, row, indexColumnCartao);
+                String fiado = Main.elemOfTable(tableCaixa, row, indexColumnFiado);
                 formatDesc += PanelVenda.createStringOfTransaction(descricao);
+                formatDesc += "\nForma de pagamento ";
+                if(dinheiro.equals("0.00")==false)
+                    formatDesc += "\n   Dinheiro:               "+dinheiro;
+                if(cartao.equals("0.00")==false)     
+                    formatDesc += "\n   Cartão:                 "+cartao;
+                if(fiado.equals("0.00")==false) 
+                    formatDesc += "\n   Fiado:                  "+fiado;
+                if(comSaldoCliente.equals("0.00")==false) 
+                    formatDesc += "\n   No saldo do cliente:    "+comSaldoCliente;
             }
             if (tipo.equals("devolucao")) {
                 formatDesc += "devolução:\n\n";
@@ -121,7 +138,7 @@ public class PanelCaixa extends javax.swing.JPanel {
                     }
                 }
             }
-            JOptionPane.showMessageDialog(tableCaixa, formatDesc);
+            Main.formattedMessage(tableCaixa, formatDesc, "Transação", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -415,6 +432,8 @@ public class PanelCaixa extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_abrirFecharCaixaButtonActionPerformed
     private void fecharCaixa() {
+        if(lojaDB.askPassword(null, true)==false)
+            return;
         String caixaCalculado = lojaDB.getCaixaEmDinheiroCalculado();
         FechamentoCaixaPanel fecharCaixaPanel = new FechamentoCaixaPanel(caixaCalculado, "", null, "", "");
         String caixaInformado = "", data = "", hora = "", obs = "";

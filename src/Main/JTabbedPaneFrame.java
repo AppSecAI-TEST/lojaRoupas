@@ -21,7 +21,7 @@ public class JTabbedPaneFrame extends JFrame {
     PanelConferencia panelConf;
     String tableNames[] = new String[]{"Venda", "Cliente", "Fornecedor", "Usuario", "TabelaDeTransacoes", "TipoMercadoria", "Mercadoria", "Caixa"};
     Main lojaDB;
-
+    private int currentTabIndex = 0, previousTabIndex = 0;
     public JTabbedPaneFrame(Main lojaDB) {
         super("Controle de Estoque");
         this.lojaDB = lojaDB;
@@ -29,11 +29,11 @@ public class JTabbedPaneFrame extends JFrame {
         tabbedPane.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
+                previousTabIndex = currentTabIndex;
+                currentTabIndex = tabbedPane.getSelectedIndex();
                 Component component = tabbedPane.getSelectedComponent();                
                 if(component.equals(panelConsulta))
-                    panelConsulta.update();
-                if(component.equals(panelEstat))
-                    panelEstat.update();               
+                    panelConsulta.update();              
                 if(component.equals(panelCaixa))
                     panelCaixa.update();  
                 if(component.equals(panelCadastro))
@@ -44,6 +44,14 @@ public class JTabbedPaneFrame extends JFrame {
                     panelVenda.update();
                 if(component.equals(panelDevolucao))
                     panelDevolucao.update();
+                if(currentTabIndex==Main.getIndexOfTabWithName(tabbedPane, "Estatísticas")){
+                    panelEstat.clean();
+                    if(lojaDB.askPassword(null, true)==false)
+                        tabbedPane.setSelectedIndex(previousTabIndex);
+                    else
+                        panelEstat.update();
+                }
+                    
             }
         });
         panelVenda = new PanelVenda(lojaDB);
@@ -64,7 +72,7 @@ public class JTabbedPaneFrame extends JFrame {
         tabbedPane.addTab("Cadastro", null, panelCadastro, "Cadastro");
 
         panelEstat = new PanelEstatistica(lojaDB);
-        tabbedPane.addTab("Estatisticas", null, panelEstat, "Estatísticas");
+        tabbedPane.addTab("Estatísticas", null, panelEstat, "Estatísticas");
 
         panelConf = new PanelConferencia(lojaDB);
         tabbedPane.addTab("Conferência", null, panelConf, "Conferência");

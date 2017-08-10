@@ -219,7 +219,7 @@ public class PanelConsulta extends javax.swing.JPanel {
         );
         tableConsultaPanelLayout.setVerticalGroup(
             tableConsultaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 200, Short.MAX_VALUE)
+            .addGap(0, 205, Short.MAX_VALUE)
         );
 
         tableNameComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Mercadoria", "Cliente", "Fornecedor", "Usuario", "Penduras", "TipoMercadoria" }));
@@ -297,9 +297,9 @@ public class PanelConsulta extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(somarButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tableConsultaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tableConsultaPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
     
@@ -312,6 +312,8 @@ public class PanelConsulta extends javax.swing.JPanel {
     }//GEN-LAST:event_procuraFieldActionPerformed
 
     private void estoqueButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_estoqueButtonActionPerformed
+        if(lojaDB.askPassword(null, true)==false)   
+            return;
         String query = "SELECT ID_Mercadoria FROM Mercadoria WHERE Status= \'no estoque\'";
         int numMercadoriasNoEstoque=lojaDB.getNumberColumnsOfQuery(query);
         query = "SELECT SUM(Preco_Merc) FROM Mercadoria WHERE Status= \'no estoque\'";
@@ -346,6 +348,8 @@ public class PanelConsulta extends javax.swing.JPanel {
     }//GEN-LAST:event_estoqueButtonActionPerformed
 
     private void somarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_somarButtonActionPerformed
+        if(lojaDB.askPassword(null, true)==false)   
+            return;
         int len = tableConsulta.getRowCount();
         if(len==0){
             JOptionPane.showMessageDialog(somarButton, "Tabela vazia! Consulte algo válido", "Aviso", JOptionPane.WARNING_MESSAGE);            

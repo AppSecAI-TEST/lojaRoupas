@@ -1,10 +1,7 @@
 -avisar a mamae que nao dá pra botar desconto global para facilitar o valor da devolucao
--botar perguntas "tem certeza ...."
 -centralizar o conteudo das tabelas e acertar a sua largura
--botar senha para algumas funções
 -mudar tema
 -guardar queries num arquivo e ficar mandando para a internet, além disso cada vez que fechar o caixa dar um select em todas as tabelas e guardar na internet
--perguntar se deseja fechar o caixa antes de desligar
 -cadastrar os resultados anteriores em caixas
 -lembrar que dá até pra escolher as ordens das colunas com query
 

@@ -461,7 +461,7 @@ public class PanelVenda extends javax.swing.JPanel {
         return null;
     }
     public static String createStringOfVenda(String split3[]){        
-        String descricao=split3[0]+":\n\n";
+        String descricao=split3[0]+":\n";
         String products = split3[1];
         String[] split2 = products.split("##");
         int len2=split2.length;
@@ -477,7 +477,7 @@ public class PanelVenda extends javax.swing.JPanel {
         }
         descricao+="SubTotal: "+ split3[2]+"\n";
         descricao+="Desconto: "+ split3[3]+"\n";
-        descricao+="Total: "+ split3[4]+"\n";
+        descricao+="Total:    "+ split3[4]+"\n";
         return descricao;        
     }    
     private boolean isValidSitution(){

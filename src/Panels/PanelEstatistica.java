@@ -40,6 +40,9 @@ public class PanelEstatistica extends javax.swing.JPanel {
         searchField.getDocument().addDocumentListener(documentListener);        
         update();
     }
+    public void clean(){
+        Main.cleanTable(tableEstat);
+    }
     private void createTable(String[] columnNames){
         DefaultTableModel model;      
         model = new DefaultTableModel(columnNames,0);
@@ -235,6 +238,8 @@ public class PanelEstatistica extends javax.swing.JPanel {
     }//GEN-LAST:event_orderValorOptionActionPerformed
     
     private void somarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_somarButtonActionPerformed
+        if(lojaDB.askPassword(null, true)==false)   
+            return;
         int len = tableEstat.getRowCount();
         if(len==0){
             JOptionPane.showMessageDialog(somarButton, "Tabela vazia! Procure uma data válida", "Aviso", JOptionPane.WARNING_MESSAGE);            

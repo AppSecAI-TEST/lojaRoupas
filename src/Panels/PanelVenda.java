@@ -29,7 +29,7 @@ public class PanelVenda extends javax.swing.JPanel {
         JScrollPane scrollTable=new JScrollPane(tableVenda);
         tableVendasPanel.removeAll();
         tableVendasPanel.add(scrollTable);         
-        tableVenda.addMouseListener(new PopClickListener(this));
+        tableVenda.addMouseListener(new PopClickListener(this, tableVenda));
     }
     public void setConfirmaVendaPanelVisible(boolean flag){
         if(frameConfirma!=null)
@@ -371,10 +371,10 @@ public class PanelVenda extends javax.swing.JPanel {
         barCodeField.setText("");
     }//GEN-LAST:event_barCodeFieldActionPerformed
     public static boolean hasCodeInTable(JTable table, String code){
-        int len = table.getRowCount();
+        int len = table.getRowCount();        
+        int colOfKey= Main.getIndexColumnWithColumnName(table, "Código");
         for(int i=0;i<len;i++){
-            int colOfKey= Main.getIndexColumnWithColumnName(table, "Código");
-            if(elemOfTable(table, i, colOfKey).equals(code))
+            if(Main.elemOfTable(table, i, colOfKey).equals(code))
                 return true;
         }
         return false;
@@ -409,19 +409,19 @@ public class PanelVenda extends javax.swing.JPanel {
         double subTotalValue=0;
         double totalDiscount=0;
         String descricao="venda###";
-        for(int i=0;i<len;i++){
-            int colOfKey = Main.getIndexColumnWithColumnName(tableVenda, "Código");
-            int colOfType = Main.getIndexColumnWithColumnName(tableVenda, "Tipo");
-            int colOfDesc = Main.getIndexColumnWithColumnName(tableVenda, "Descrição");
-            int colOfSize = Main.getIndexColumnWithColumnName(tableVenda, "Tamanho");
-            int colOfDiscount = Main.getIndexColumnWithColumnName(tableVenda, "Desconto");
-            int colOfValue = Main.getIndexColumnWithColumnName(tableVenda, "Valor");
-            descricao+=elemOfTable(tableVenda, i, colOfKey)+"#";            
-            descricao+=elemOfTable(tableVenda, i, colOfType)+"#";
-            descricao+=elemOfTable(tableVenda, i, colOfDesc)+"#";
-            descricao+=elemOfTable(tableVenda, i, colOfSize)+"#";
-            descricao+=elemOfTable(tableVenda, i, colOfDiscount)+"#";
-            descricao+=elemOfTable(tableVenda, i, colOfValue)+"##";            
+        int colOfKey = Main.getIndexColumnWithColumnName(tableVenda, "Código");
+        int colOfType = Main.getIndexColumnWithColumnName(tableVenda, "Tipo");
+        int colOfDesc = Main.getIndexColumnWithColumnName(tableVenda, "Descrição");
+        int colOfSize = Main.getIndexColumnWithColumnName(tableVenda, "Tamanho");
+        int colOfDiscount = Main.getIndexColumnWithColumnName(tableVenda, "Desconto");
+        int colOfValue = Main.getIndexColumnWithColumnName(tableVenda, "Valor");
+        for(int i=0;i<len;i++){            
+            descricao+=Main.elemOfTable(tableVenda, i, colOfKey)+"#";            
+            descricao+=Main.elemOfTable(tableVenda, i, colOfType)+"#";
+            descricao+=Main.elemOfTable(tableVenda, i, colOfDesc)+"#";
+            descricao+=Main.elemOfTable(tableVenda, i, colOfSize)+"#";
+            descricao+=Main.elemOfTable(tableVenda, i, colOfDiscount)+"#";
+            descricao+=Main.elemOfTable(tableVenda, i, colOfValue)+"##";            
             subTotalValue+=Double.parseDouble(tableVenda.getValueAt(i, colOfValue).toString());
             totalDiscount+=Double.parseDouble(tableVenda.getValueAt(i, colOfDiscount).toString());
         }
@@ -447,6 +447,11 @@ public class PanelVenda extends javax.swing.JPanel {
         subTotalLabel.setText("0");
         totalLabel.setText("0");
         this.discountLabel.setText("0");
+    }
+    public void verEvent(MouseEvent evt){
+        int row = tableVenda.rowAtPoint(evt.getPoint());
+        int col = tableVenda.columnAtPoint(evt.getPoint());        
+        Main.verEvent(tableVenda, row, col);        
     }
     public static String createStringOfTransaction(String root){
         String split3[]= root.split("###");
@@ -474,16 +479,7 @@ public class PanelVenda extends javax.swing.JPanel {
         descricao+="Desconto: "+ split3[3]+"\n";
         descricao+="Total: "+ split3[4]+"\n";
         return descricao;        
-    }
-    private static String elemOfTable(JTable table, int row, int col){
-        String elem = table.getValueAt(row, col).toString();
-        elem = elem.replaceAll("#", "-");
-        elem = elem.replaceAll("\"", "-");
-        elem = elem.replaceAll("\'", "-");
-        if(elem.equals(""))
-            return " ";
-        return elem;
-    }
+    }    
     private boolean isValidSitution(){
         if(lojaDB.caixaAberto==false){
             JOptionPane.showMessageDialog(concluirVendaButton, "Abra o caixa!", "Aviso", JOptionPane.WARNING_MESSAGE);            

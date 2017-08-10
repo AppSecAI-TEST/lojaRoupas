@@ -50,7 +50,7 @@ public class PanelCadastro extends javax.swing.JPanel {
         panelUsuario = new PanelUsuario(lojaDB); 
         tabbedPaneCadastro.addTab( "Usuário", null, panelUsuario, "Usuário" );              
         tableCadastro.setDefaultEditor(Object.class, null);
-        tableCadastro.addMouseListener(new PopClickListener(this));
+        tableCadastro.addMouseListener(new PopClickListener(this, tableCadastro));
     }    
     public ResultSet executeQuery(String query){
         return lojaDB.executeQuery(query);
@@ -150,7 +150,11 @@ public class PanelCadastro extends javax.swing.JPanel {
     private void tabbedPaneCadastroStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPaneCadastroStateChanged
         update();
     }//GEN-LAST:event_tabbedPaneCadastroStateChanged
-
+    public void verEvent(MouseEvent evt){
+        int row = tableCadastro.rowAtPoint(evt.getPoint());
+        int col = tableCadastro.columnAtPoint(evt.getPoint());        
+        Main.verEvent(tableCadastro, row, col);        
+    }
     private void inserirButtonActionPerformed(java.awt.event.ActionEvent evt) {                                              
         String nameClient=null;
         switch(getTableName()){

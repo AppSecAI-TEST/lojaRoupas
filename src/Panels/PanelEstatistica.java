@@ -6,7 +6,12 @@
 package Panels;
 
 import Main.Main;
+import auxClasses.AuxFieldCreditDevol;
+import auxClasses.PopClickListener;
+import java.awt.event.MouseEvent;
+import java.sql.ResultSet;
 import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -28,7 +33,11 @@ public class PanelEstatistica extends javax.swing.JPanel {
         createTable(new String[]{"ID do Caixa","Tipo de Transacao", "ID da transacao", "Descricao", "Valor total"}); 
         JScrollPane scrollTable=new JScrollPane(tableEstat);
         tableEstatisticaPanel.removeAll();
-        tableEstatisticaPanel.add(scrollTable);        
+        tableEstatisticaPanel.add(scrollTable);     
+        diaOption.setSelected(true);
+        orderDataOption.setSelected(true);
+        AuxFieldCreditDevol documentListener = new AuxFieldCreditDevol(this);
+        searchField.getDocument().addDocumentListener(documentListener);        
         update();
     }
     private void createTable(String[] columnNames){
@@ -36,7 +45,8 @@ public class PanelEstatistica extends javax.swing.JPanel {
         model = new DefaultTableModel(columnNames,0);
         tableEstat = new JTable(model);        
         tableEstatisticaPanel.setLayout(new BoxLayout(tableEstatisticaPanel, BoxLayout.PAGE_AXIS));     
-        tableEstat.setDefaultEditor(Object.class, null);
+        tableEstat.setDefaultEditor(Object.class, null);        
+        tableEstat.addMouseListener(new PopClickListener(this, tableEstat));
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -52,13 +62,14 @@ public class PanelEstatistica extends javax.swing.JPanel {
         tableEstatisticaPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
+        diaOption = new javax.swing.JRadioButton();
+        mesOption = new javax.swing.JRadioButton();
+        anoOption = new javax.swing.JRadioButton();
         jLabel1 = new javax.swing.JLabel();
-        jRadioButton4 = new javax.swing.JRadioButton();
-        jRadioButton5 = new javax.swing.JRadioButton();
-        jButton1 = new javax.swing.JButton();
+        orderDataOption = new javax.swing.JRadioButton();
+        orderValorOption = new javax.swing.JRadioButton();
+        searchField = new javax.swing.JTextField();
+        somarButton = new javax.swing.JButton();
 
         javax.swing.GroupLayout tableEstatisticaPanelLayout = new javax.swing.GroupLayout(tableEstatisticaPanel);
         tableEstatisticaPanel.setLayout(tableEstatisticaPanelLayout);
@@ -68,31 +79,73 @@ public class PanelEstatistica extends javax.swing.JPanel {
         );
         tableEstatisticaPanelLayout.setVerticalGroup(
             tableEstatisticaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 198, Short.MAX_VALUE)
+            .addGap(0, 196, Short.MAX_VALUE)
         );
 
         jLabel3.setText("Resultados: ");
 
         jLabel4.setText("Vendas por: ");
+        jLabel4.setToolTipText("Procura vendas pela data de abertura do caixa");
 
-        buttonGroup1.add(jRadioButton1);
-        jRadioButton1.setText("dia");
+        buttonGroup1.add(diaOption);
+        diaOption.setText("dia");
+        diaOption.setToolTipText("digite o dia no formato DD/MM/AA ou DD/MM/AAAA");
+        diaOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                diaOptionActionPerformed(evt);
+            }
+        });
 
-        buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setText("mês");
+        buttonGroup1.add(mesOption);
+        mesOption.setText("mês");
+        mesOption.setToolTipText("Digite o mês no formato MM/AA ou MM/AAAA");
+        mesOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mesOptionActionPerformed(evt);
+            }
+        });
 
-        buttonGroup1.add(jRadioButton3);
-        jRadioButton3.setText("ano");
+        buttonGroup1.add(anoOption);
+        anoOption.setText("ano");
+        anoOption.setToolTipText("Digite o ano no formato AA ou AAAA");
+        anoOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                anoOptionActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Ordenar por: ");
 
-        buttonGroup2.add(jRadioButton4);
-        jRadioButton4.setText("data");
+        buttonGroup2.add(orderDataOption);
+        orderDataOption.setText("data");
+        orderDataOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                orderDataOptionActionPerformed(evt);
+            }
+        });
 
-        buttonGroup2.add(jRadioButton5);
-        jRadioButton5.setText("valor");
+        buttonGroup2.add(orderValorOption);
+        orderValorOption.setText("valor");
+        orderValorOption.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                orderValorOptionActionPerformed(evt);
+            }
+        });
 
-        jButton1.setText("Estoque");
+        searchField.setMinimumSize(new java.awt.Dimension(30, 20));
+        searchField.setPreferredSize(new java.awt.Dimension(30, 20));
+        searchField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchFieldActionPerformed(evt);
+            }
+        });
+
+        somarButton.setText("somar");
+        somarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                somarButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -104,24 +157,27 @@ public class PanelEstatistica extends javax.swing.JPanel {
                     .addComponent(tableEstatisticaPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButton4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButton5))
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(somarButton))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButton1)
+                                .addComponent(diaOption)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButton2)
+                                .addComponent(mesOption)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jRadioButton3)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton1)))
-                        .addGap(0, 103, Short.MAX_VALUE)))
+                                .addComponent(anoOption)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(orderDataOption)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(orderValorOption)))
+                        .addGap(0, 89, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -130,38 +186,164 @@ public class PanelEstatistica extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jRadioButton3)
-                    .addComponent(jButton1))
+                    .addComponent(diaOption)
+                    .addComponent(mesOption)
+                    .addComponent(anoOption)
+                    .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jRadioButton4)
-                    .addComponent(jRadioButton5))
-                .addGap(12, 12, 12)
-                .addComponent(jLabel3)
+                    .addComponent(orderDataOption)
+                    .addComponent(orderValorOption))
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(somarButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tableEstatisticaPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-    public void update(){
-        lojaDB.updateTable(tableEstat, tableEstatisticaPanel, "Caixa", false, null);
-    }
 
+    private void searchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchFieldActionPerformed
+        update();
+    }//GEN-LAST:event_searchFieldActionPerformed
+    public void verEvent(MouseEvent evt){
+        int row = tableEstat.rowAtPoint(evt.getPoint());
+        int col = tableEstat.columnAtPoint(evt.getPoint());        
+        Main.verEvent(tableEstat, row, col);        
+    }
+    
+    private void diaOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_diaOptionActionPerformed
+        update();
+    }//GEN-LAST:event_diaOptionActionPerformed
+
+    private void mesOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mesOptionActionPerformed
+        update();
+    }//GEN-LAST:event_mesOptionActionPerformed
+
+    private void anoOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anoOptionActionPerformed
+        update();
+    }//GEN-LAST:event_anoOptionActionPerformed
+
+    private void orderDataOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_orderDataOptionActionPerformed
+        update();
+    }//GEN-LAST:event_orderDataOptionActionPerformed
+
+    private void orderValorOptionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_orderValorOptionActionPerformed
+        update();
+    }//GEN-LAST:event_orderValorOptionActionPerformed
+    
+    private void somarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_somarButtonActionPerformed
+        int len = tableEstat.getRowCount();
+        if(len==0){
+            JOptionPane.showMessageDialog(somarButton, "Tabela vazia! Procure uma data válida", "Aviso", JOptionPane.WARNING_MESSAGE);            
+            return;
+        }
+        double vendasDevol=0;
+        double quebraDeCaixa=0;
+        int colOfVendasDevol = Main.getIndexColumnWithColumnName(tableEstat, "VendasDevolucoes");
+        int colOfQuebraDeCaixa = Main.getIndexColumnWithColumnName(tableEstat, "QuebraDeCaixa");
+        for(int i=0;i<len;i++){            
+            vendasDevol+=Main.formatDoubleString(Main.elemOfTable(tableEstat, i, colOfVendasDevol));            
+            quebraDeCaixa+=Main.formatDoubleString(Main.elemOfTable(tableEstat, i, colOfQuebraDeCaixa));
+        }
+        String message = "Valor total com vendas e devoluções dos resultados abaixo:  "+Main.twoDig(vendasDevol);
+        message +=     "\nValor total das quebras de caixa dos resultados abaixo:     "+Main.twoDig(quebraDeCaixa);        
+        message +=     "\nNúmero de resultados encontrados: "+len;
+        Main.formattedMessage(somarButton, message, "Informações relativas aos resultados abaixo", JOptionPane.INFORMATION_MESSAGE);                
+    }//GEN-LAST:event_somarButtonActionPerformed
+    public void update(){
+        if(isValidKey()==false){
+            Main.cleanTable(tableEstat);
+            return;
+        }
+        String query= getQuery();
+        
+        ResultSet results = lojaDB.executeQuery(query);
+        lojaDB.updateTable(tableEstat, tableEstatisticaPanel, "Caixa", true, results);
+    }
+    private boolean isValidKey(){
+        String keyOfSearch=searchField.getText().trim();
+        int numberOfBars = Main.numberOfChars(keyOfSearch,'/');
+        if(keyOfSearch.contains("//"))
+            return false;
+        if(numberOfBars==0)
+            return Main.isIntegerValid(keyOfSearch);
+        if(numberOfBars==1 && anoOption.isSelected()==false)
+            if(numberOfEntries(keyOfSearch)==2 && Main.isIntegerValid(keyOfSearch.split("/")))
+                return true;
+        if(numberOfBars==2 && diaOption.isSelected())
+            if(numberOfEntries(keyOfSearch)==3 && Main.isIntegerValid(keyOfSearch.split("/")))
+                return true;     
+        return false;
+    }
+    private String getQuery(){
+        String query=   "SELECT * FROM Caixa ";
+        String keyOfSearch=searchField.getText().trim();
+        try{
+            if(numberOfEntries(keyOfSearch)==1){
+                if(diaOption.isSelected())
+                    query+="WHERE DAY(Data_Abertura) = "+keyOfSearch;
+                if(mesOption.isSelected())
+                    query+="WHERE MONTH(Data_Abertura) = "+keyOfSearch;
+                if(anoOption.isSelected()){
+                    if(keyOfSearch.length()==2)
+                        keyOfSearch="20"+keyOfSearch;
+                    query+="WHERE YEAR(Data_Abertura) = "+keyOfSearch;
+                }
+            }
+            else if(numberOfEntries(keyOfSearch)==2){
+                String split[]=keyOfSearch.split("/");
+                String key1=split[0];
+                String key2=split[1];
+                if(diaOption.isSelected())
+                    query+="WHERE DAY(Data_Abertura) = "+key1+" AND MONTH(Data_Abertura) = "+key2;
+                if(mesOption.isSelected()){
+                    if(key2.length()==2)
+                        key2="20"+key2;
+                    query+="WHERE MONTH(Data_Abertura) = "+key1+" AND YEAR(Data_Abertura) = "+key2;
+                }
+            }
+            else if(numberOfEntries(keyOfSearch)==3){
+                String split[]=keyOfSearch.split("/");
+                String key1=split[0];
+                String key2=split[1];
+                String key3=split[2];     
+                if(key3.length()==2)
+                        key3="20"+key3;
+                if(diaOption.isSelected())
+                    query+="WHERE DAY(Data_Abertura) = "+key1+" AND MONTH(Data_Abertura) = "+key2+
+                            " AND YEAR(Data_Abertura) = "+key3;
+            }
+        }
+        catch(Exception e){
+            //e.printStackTrace();
+        }        
+        if(orderDataOption.isSelected())
+            query+=" ORDER BY ID_Caixa DESC, Data_Abertura DESC";
+        if(orderValorOption.isSelected())
+            query+=" ORDER BY VendasDevolucoes DESC";
+        return query;
+    }
+    private int numberOfEntries(String key){
+        if(key.isEmpty())
+            return 0;
+        return key.split("/").length;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButton anoOption;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JRadioButton diaOption;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton4;
-    private javax.swing.JRadioButton jRadioButton5;
+    private javax.swing.JRadioButton mesOption;
+    private javax.swing.JRadioButton orderDataOption;
+    private javax.swing.JRadioButton orderValorOption;
+    private javax.swing.JTextField searchField;
+    private javax.swing.JButton somarButton;
     private javax.swing.JPanel tableEstatisticaPanel;
     // End of variables declaration//GEN-END:variables
 }

@@ -36,14 +36,22 @@ public class PopUp extends JPopupMenu {
         if(panel.getClass()==PanelConferencia.class){
             updateConferencia(panel, e);
         }    
+        if(panel.getClass()==PanelDevolucao.class){
+            updateDevolucao(panel, e);
+        } 
+        if(panel.getClass()==PanelEstatistica.class){
+            updateEstatistica(panel, e);
+        }    
         show(e.getComponent(), e.getX(), e.getY());
     }
     public void vendaPop(Object panelObj, MouseEvent e){
-        PanelVenda panel = (PanelVenda) panelObj;
+        PanelVenda panel = (PanelVenda) panelObj;        
+        verItem = new JMenuItem("Ver");
         removeItem = new JMenuItem("Remover");
         discountItem = new JMenuItem("Desconto");
+        add(verItem);
         add(removeItem);
-        add(discountItem);
+        add(discountItem);        
         removeItem.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -54,6 +62,12 @@ public class PopUp extends JPopupMenu {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 panel.discountEvent(e);
+            }
+        });
+        verItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                panel.verEvent(e);
             }
         });
     }
@@ -71,7 +85,9 @@ public class PopUp extends JPopupMenu {
     }
     public void updateCadastro(Object panelObj, MouseEvent e){
         PanelCadastro panelCad = (PanelCadastro)panelObj;
-        updateItem = new JMenuItem("Alterar");
+        verItem = new JMenuItem("Ver");
+        updateItem = new JMenuItem("Alterar");        
+        add(verItem);       
         add(updateItem);
         updateItem.addActionListener(new ActionListener() {
             @Override
@@ -80,10 +96,18 @@ public class PopUp extends JPopupMenu {
                     panelCad.updateSQL(e);
             }
         });
+        verItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                panelCad.verEvent(e);
+            }
+        });
     }
     public void updateConferencia(Object panelObj, MouseEvent e){
         PanelConferencia panelConf = (PanelConferencia)panelObj;
+        verItem = new JMenuItem("Ver");        
         updateItem = new JMenuItem("Alterar");
+        add(verItem);
         add(updateItem);
         updateItem.addActionListener(new ActionListener() {
             @Override
@@ -92,16 +116,53 @@ public class PopUp extends JPopupMenu {
                     panelConf.updateSQL(e);
             }
         });
+        verItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                panelConf.verEvent(e);
+            }
+        });
     }
+    public void updateDevolucao(Object panelObj, MouseEvent e){
+        PanelDevolucao panelDevol = (PanelDevolucao)panelObj;
+        verItem = new JMenuItem("Ver");       
+        add(verItem);
+        verItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                panelDevol.verEvent(e);
+            }
+        });
+    }
+    public void updateEstatistica(Object panelObj, MouseEvent e){
+        PanelEstatistica panelEstat = (PanelEstatistica)panelObj;
+        verItem = new JMenuItem("Ver");       
+        add(verItem);
+        verItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                panelEstat.verEvent(e);
+            }
+        });
+    }
+    
     public void updateConsulta(Object panelObj, MouseEvent e){
         PanelConsulta panelCons = (PanelConsulta)panelObj;
+        verItem = new JMenuItem("Ver");        
         updateItem = new JMenuItem("Alterar");
+        add(verItem);
         add(updateItem);
         updateItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 if(panelCons!=null)
                     panelCons.updateSQL(e);
+            }
+        });
+        verItem.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                panelCons.verEvent(e);
             }
         });
     }

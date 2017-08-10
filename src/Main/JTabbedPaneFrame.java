@@ -70,7 +70,7 @@ public class JTabbedPaneFrame extends JFrame {
         tabbedPane.addTab("Conferência", null, panelConf, "Conferência");
 
         add(tabbedPane); // add JTabbedPane to frame     
-    } // end JTabbedPaneFrame constructor
+    }
     public void setConfirmaVendaPanelVisible(boolean flag){
         panelVenda.setConfirmaVendaPanelVisible(flag);
     }

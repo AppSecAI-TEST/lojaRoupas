@@ -11,14 +11,12 @@ import auxClasses.AddOrRemovePanel;
 import auxClasses.FechamentoCaixaPanel;
 import auxClasses.PopClickListener;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import javax.swing.BoxLayout;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
 public class PanelCaixa extends javax.swing.JPanel {
@@ -34,6 +32,8 @@ public class PanelCaixa extends javax.swing.JPanel {
         tableCaixaPanel.removeAll();
         tableCaixaPanel.add(scrollTable);
         somenteCaixaAtualCheckBox.setSelected(true);
+        
+        tableCaixa.setRowSelectionAllowed(true);
         update();
     }
 
@@ -132,7 +132,7 @@ public class PanelCaixa extends javax.swing.JPanel {
         tableCaixa = new JTable(model);
         tableCaixaPanel.setLayout(new BoxLayout(tableCaixaPanel, BoxLayout.PAGE_AXIS));
         tableCaixa.setDefaultEditor(Object.class, null);
-        tableCaixa.addMouseListener(new PopClickListener(this));
+        tableCaixa.addMouseListener(new PopClickListener(this, tableCaixa));
     }
 
     public void setLabelsCaixa() {
@@ -447,7 +447,7 @@ public class PanelCaixa extends javax.swing.JPanel {
         String quebraDeCaixa = Main.twoDig(caixaInf - caixaCalc);
         String query = "UPDATE Caixa SET Status = 'fechado', Data_Fechamento = " + data + " , Hora_Fechamento = " + hora
                 + " , FinalInformado = " + caixaInformado + " , Observacao = \'" + obs + "\' , QuebraDeCaixa = "
-                + quebraDeCaixa + " where ID_Caixa = " + lojaDB.getOfCaixa("ID_Caixa");
+                + quebraDeCaixa + ", VendasDevolucoes = "+vendasDevLabel.getText()+"  where ID_Caixa = " + lojaDB.getOfCaixa("ID_Caixa");
         //Main.p(query);
         lojaDB.executeQuery(query);
         update();
@@ -463,11 +463,12 @@ public class PanelCaixa extends javax.swing.JPanel {
         return date;
     }
     public boolean isValidFechamento(FechamentoCaixaPanel panel) {
-        String caixaInformado = panel.getCaixaInformado();
+        String caixaInformado = panel.getCaixaInformado();        
         String data = panel.getData();
         data = completeDate(data);
         String hora = panel.getHora();
-        if (Main.isDoubleValid(caixaInformado) == false || Main.formatDoubleString(caixaInformado) < 0) {
+        caixaInformado=caixaInformado.trim();        
+        if (caixaInformado.isEmpty() || Main.isDoubleValid(caixaInformado) == false || Main.formatDoubleString(caixaInformado) < 0) {
             JOptionPane.showMessageDialog(null, "Valor inválido!", "Aviso", JOptionPane.WARNING_MESSAGE);
             return false;
         }
@@ -489,10 +490,7 @@ public class PanelCaixa extends javax.swing.JPanel {
         somenteCaixaAtualCheckBox.setSelected(true);
         update();
         String caixaCalculado = lojaDB.getMessageCaixaEmDinheiroCalculado(tableCaixa);        
-        Font original = UIManager.getFont("Label.font");
-        UIManager.put("Label.font", new Font("monospaced", Font.PLAIN, 12)); // specify your monospaced font here
-        JOptionPane.showMessageDialog(verCaixaAtualButton, caixaCalculado,"Detalhamento do caixa", JOptionPane.INFORMATION_MESSAGE);
-        UIManager.put("Label.font", original);        
+        Main.formattedMessage(verCaixaAtualButton, caixaCalculado,"Detalhamento do caixa", JOptionPane.INFORMATION_MESSAGE);               
     }//GEN-LAST:event_verCaixaAtualButtonActionPerformed
 
     private void somenteCaixaAtualCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_somenteCaixaAtualCheckBoxActionPerformed
@@ -541,7 +539,7 @@ public class PanelCaixa extends javax.swing.JPanel {
         hora = Main.formatStringToSql("Time", hora);
         
         JOptionPane.showMessageDialog(null, "Caixa aberto com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);
-        String query = "insert into caixa(Status, Data_Abertura, Hora_Abertura, Adicionado, Retirado) Values ('aberto', " + data + ", " + hora + ", " + value + ", 0)";
+        String query = "insert into caixa(Status, Data_Abertura, Hora_Abertura, Adicionado, Retirado, VendasDevolucoes) Values ('aberto', " + data + ", " + hora + ", " + value + ", 0, 0)";
         lojaDB.executeQuery(query);
         //----------------------------------------------------------------------
         //----------------------------------------------------------------------    
@@ -607,11 +605,11 @@ public class PanelCaixa extends javax.swing.JPanel {
         lojaDB.setBooleanCaixaAberto();
         setLabelsCaixa();
         if(somenteCaixaAtualCheckBox.isSelected()){
-            ResultSet results = lojaDB.executeQuery("SELECT * FROM Transacao where ID_Caixa = " + lojaDB.getOfCaixa("ID_Caixa")+" ORDER BY Data_Transacao DESC, Hora_Transacao DESC");
+            ResultSet results = lojaDB.executeQuery("SELECT * FROM Transacao where ID_Caixa = " + lojaDB.getOfCaixa("ID_Caixa")+" ORDER BY ID_Caixa DESC, Data_Transacao DESC, Hora_Transacao DESC");
             lojaDB.updateTable(tableCaixa, tableCaixaPanel, "Transacao", true, results);
         }
         else{
-            ResultSet results = lojaDB.executeQuery("SELECT * FROM Transacao ORDER BY Data_Transacao DESC, Hora_Transacao DESC");            
+            ResultSet results = lojaDB.executeQuery("SELECT * FROM Transacao ORDER BY ID_Caixa DESC, Data_Transacao DESC, Hora_Transacao DESC");            
             lojaDB.updateTable(tableCaixa, tableCaixaPanel, "Transacao", true, results);
         }
     }

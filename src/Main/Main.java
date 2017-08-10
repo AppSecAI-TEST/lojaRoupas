@@ -1,5 +1,9 @@
 package Main;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.DriverManager;
@@ -20,6 +24,7 @@ import javax.swing.JTable;
 import java.net.InetAddress;
 import java.util.Date;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import org.apache.commons.net.ntp.NTPUDPClient; 
 import org.apache.commons.net.ntp.TimeInfo;
 
@@ -33,17 +38,32 @@ public class Main {
     public HashMap<String,String> caixaMap=new HashMap();
     static long time = -1;
     static DateAndHour myDateAndHour;
-    static int secondsToWaitTimeServer = 2;
+    static int secondsToWaitTimeServer = 1;
     Main() {   
         pathConnection = getPathConnection("CriancaBonitaDB");
         tabbedFrame = new JTabbedPaneFrame(this);
         tabbedFrame.setVisible(true);
-        tabbedFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        tabbedFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         tabbedFrame.setSize(700,700);
+        tabbedFrame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                if(caixaAberto==false)
+                    System.exit(0);
+                String[] options=new String[]{"Desligar assim mesmo", "Voltar"};
+                String message = "O caixa ainda está aberto, aconselha-se fechá-lo antes de desligar o programa";
+                int reply = JOptionPane.showOptionDialog(null, message, "Aviso",
+                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+                //0 - confirm      1 - nao confirma
+                if(reply==0)
+                    System.exit(0);                    
+            }
+        });
         // connect to database books and query database 
         while(tabbedFrame.isEnabled()){}       
         close_connection(pathConnection.connection, pathConnection.statement);        
     }
+  
     public void setTabbedPaneVisible(boolean flag){
         tabbedFrame.setVisible(flag);
     }
@@ -328,6 +348,16 @@ public class Main {
         if(nameCol.equals("Preço"))   
             return "Preco_Merc";   
         return nameCol;
+    }    
+    public static int numberOfChars(String s, char c){
+        if(s==null)
+            return 0;
+        int count =0;
+        int len =s.length();
+        for(int i=0;i<len;i++)
+            if(s.charAt(i)==c)
+                count++;        
+        return count;
     }
     private boolean isValidInput(JTable table, String newValue, String nameColumn){        
         if(nameColumn.equals("Tamanho")){
@@ -419,6 +449,18 @@ public class Main {
                 return true;
         return false;
     }
+    public static String elemOfTable(JTable table, int row, int col){
+        Object elemObj = table.getValueAt(row, col);
+        if(elemObj==null)
+            return "";
+        String elem = elemObj.toString();
+        elem = elem.replaceAll("#", "-");
+        elem = elem.replaceAll("\"", "-");
+        elem = elem.replaceAll("\'", "-");
+        if(elem.equals(""))
+            return " ";
+        return elem;
+    }
     private PathConnection getPathConnection(String dataBaseName) {
         final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
         final String DATABASE_URL = "jdbc:mysql://localhost:3306/"+dataBaseName+"?autoReconnect=true&useSSL=false";
@@ -453,6 +495,40 @@ public class Main {
             System.out.println(exception);
         } // end catch 
     }
+    public static void formattedMessage(Component c, String message,String title, int option){
+        Font original = UIManager.getFont("Label.font");
+        UIManager.put("Label.font", new Font("monospaced", Font.PLAIN, 12)); // specify your monospaced font here
+        JOptionPane.showMessageDialog(c, message,title, option);
+        UIManager.put("Label.font", original); 
+    }
+    public int getNumberColumnsOfQuery(String query){
+        ResultSet results = executeQuery(query);
+        int numMercadorias=0;
+        try{
+            results.last();            
+            numMercadorias = results.getRow();
+        }catch(Exception e){}
+        return numMercadorias;
+    }
+    public String getUniqueValueOfQuery(String query){
+        ResultSet results = executeQuery(query);
+        String obj=null;
+        try{
+            results.next();            
+            obj = results.getString(1);
+        }catch(Exception e){}
+        return obj;
+    }
+    public static void verEvent(JTable table, int row, int col){
+        if (row < 0 || col < 0) 
+            return;                    
+        int nRows = table.getRowCount();
+        int nCols = table.getColumnCount();
+        String message="";
+        for(int j=0;j<nCols;j++)
+            message+=table.getColumnName(j)+":   "+table.getValueAt(row, j)+"\n";        
+        JOptionPane.showMessageDialog(table, message);
+    }  
     public static void main(String args[]) {
         Main main = new Main();
     } // end main

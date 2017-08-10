@@ -74,19 +74,20 @@ CREATE TABLE Usuario
 
 CREATE TABLE Caixa
 ( 
-	ID_Caixa        integer  NOT NULL AUTO_INCREMENT,
-	Status          char(8) NOT NULL,
+	ID_Caixa        integer  NOT NULL AUTO_INCREMENT,	
+	VendasDevolucoes decimal(6,2)  NULL,	
+	FinalInformado  decimal(6,2)  NULL,
+	QuebraDeCaixa   decimal(6,2)  NULL,
 		-- aberto ou fechado
 		-- Encontramos o resultado em vendas/devolucoes pelas transacoes
 	Data_Abertura    date    NOT NULL,	
-	Hora_Abertura    time    NOT NULL,  
-	Data_Fechamento  date     NULL, 
-	Hora_Fechamento  time     NULL, 
+	Hora_Abertura    time    NOT NULL, 	
 	Adicionado      decimal(6,2) NOT NULL,
 	Retirado        decimal(6,2)  NOT NULL,
 		-- calcular o final real e comparar com o informado
-	FinalInformado  decimal(6,2)  NULL,
-	QuebraDeCaixa   decimal(6,2)  NULL,
+	Status          char(8) NOT NULL,
+	Data_Fechamento  date     NULL, 
+	Hora_Fechamento  time     NULL, 
 	Observacao                      char(255)  NULL,
 	PRIMARY KEY (ID_Caixa)	
 )

@@ -45,7 +45,7 @@ public class PanelConferencia extends javax.swing.JPanel {
         JScrollPane scrollTableNotRegistred=new JScrollPane(tableNotRegistred);
         tableNotRegistredPanel.removeAll();
         tableNotRegistredPanel.add(scrollTableNotRegistred); 
-        tableConf.addMouseListener(new PopClickListener(this));
+        tableConf.addMouseListener(new PopClickListener(this, tableConf));
     }
     private void createTables(String cols[]){
         DefaultTableModel model1, model2;      
@@ -229,7 +229,11 @@ public class PanelConferencia extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-
+    public void verEvent(MouseEvent evt){
+        int row = tableConf.rowAtPoint(evt.getPoint());
+        int col = tableConf.columnAtPoint(evt.getPoint());        
+        Main.verEvent(tableConf, row, col);        
+    }
     private void barCodeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barCodeFieldActionPerformed
         String barCode =barCodeField.getText().trim();
         barCodeField.setText(barCode);

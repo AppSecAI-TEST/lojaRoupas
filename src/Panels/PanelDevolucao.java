@@ -8,9 +8,11 @@ package Panels;
 import auxClasses.MyFrame;
 import Main.Main;
 import auxClasses.AuxFieldCreditDevol;
+import auxClasses.PopClickListener;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.ResultSet;
@@ -78,6 +80,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
         tableDevolucaoPanel.setLayout(new BoxLayout(tableDevolucaoPanel, BoxLayout.PAGE_AXIS));     
         tableDevol.setDefaultEditor(Object.class, null);
         tableDevolucaoPanel.setPreferredSize(new Dimension(420,100));
+        tableDevol.addMouseListener(new PopClickListener(this, tableDevol));
     }
     public void search(){
         String key = getKey();
@@ -569,6 +572,11 @@ public class PanelDevolucao extends javax.swing.JPanel {
         //CODE HERE!!!!!!!!!!
         //update comboBox with new client
         //set comboBox to the new client
+    }
+    public void verEvent(MouseEvent evt){
+        int row = tableDevol.rowAtPoint(evt.getPoint());
+        int col = tableDevol.columnAtPoint(evt.getPoint());        
+        Main.verEvent(tableDevol, row, col);        
     }
     private void inMoneyOptionActionPerformed(java.awt.event.ActionEvent evt) {                                              
         if(inMoneyOption.isSelected())

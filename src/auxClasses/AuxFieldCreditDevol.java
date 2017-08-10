@@ -7,9 +7,9 @@ package auxClasses;
 
 import Panels.PanelConsulta;
 import Panels.PanelDevolucao;
+import Panels.PanelEstatistica;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.Document;
 
 /**
  *
@@ -50,7 +50,10 @@ public class AuxFieldCreditDevol implements DocumentListener {
             panelDev.search();
             panelDev.pressButtonWithTip(tip);
         }
-        
+        if(parentPanel.getClass()==PanelEstatistica.class){
+            PanelEstatistica panelEst = ((PanelEstatistica)parentPanel);
+            panelEst.update();
+        }
 //        DocumentEvent.EventType type = documentEvent.getType();
 //        String typeString = null;
 //        if (type.equals(DocumentEvent.EventType.CHANGE)) {

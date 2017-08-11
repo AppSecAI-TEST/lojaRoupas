@@ -552,11 +552,7 @@ public class PanelCaixa extends javax.swing.JPanel {
     }//GEN-LAST:event_somenteCaixaAtualCheckBoxActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String message = "Para recuperar os dados, coloque o arquivo backupString.txt em  src/Main/, e"
-                +     "\nexecute o método recoverDB da classe GenerateBackupOrRecoverDB. \n"+
-                     "\nDepois esse arquivo é deletado por segurança. Portanto, salve-o em outro lugar";        
-        lojaDB.runBackup();
-        JOptionPane.showMessageDialog(null, message);
+       lojaDB.runBackup();
     }//GEN-LAST:event_jButton1ActionPerformed
     private boolean isValidEntry(AbrirCaixaPanel abrirPanel) {
         String data = abrirPanel.getData();

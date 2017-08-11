@@ -606,10 +606,16 @@ public class Main {
         JOptionPane.showMessageDialog(c, message,title, option);
         UIManager.put("Label.font", original); 
     }
-    public int getNumberColumnsOfQuery(String query){        
-        int numMercadorias=0;
+    public int getNumberRowsOfQuery(String query){   
         try{
             ResultSet results = executeQuery(query);
+            return getNumberRowsOfQuery(results);
+        }catch(Exception e){e.printStackTrace();}
+        return 0;
+    }
+    public static int getNumberRowsOfQuery(ResultSet results){        
+        int numMercadorias=0;
+        try{
             results.last();            
             numMercadorias = results.getRow();
         }catch(Exception e){e.printStackTrace();}
@@ -1063,6 +1069,13 @@ public class Main {
     }
     public void runBackup(){
         Main main = this;
+        String message = "Tem certeza que deseja guardar seus dados agora?\n"
+                + "\nOBS: Para recuperar os dados, coloque o arquivo backupString.txt em  src/Main/, e"
+                +     "\nexecute o método recoverDB da classe GenerateBackupOrRecoverDB. (BASTA descomentar uma linha na Main)\n"+
+                     "Depois esse arquivo é deletado por segurança.";        
+        int answ = JOptionPane.showConfirmDialog(null, message, "Confirmação", JOptionPane.OK_CANCEL_OPTION);
+        if (answ != JOptionPane.OK_OPTION) 
+            return;
         new Thread(){
             public void run(){
                 new GenerateBackupOrRecoverDB(main).generateBackup();

@@ -2,6 +2,7 @@ package Main;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,6 +15,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /*
@@ -38,8 +41,14 @@ public class GenerateBackupOrRecoverDB {
         if(isEmptyDB)
             JOptionPane.showMessageDialog(null, "Banco de dados vazio! O backup não foi realizado");
         else{
-            generateFile(backup, "backupString.txt");
-            JOptionPane.showMessageDialog(null, "Backup realizado corretamente");            
+            generateFile(backup, "src/Main/backupString.txt");            
+            MailClass.main(getCurrentTotalRows());
+            JOptionPane.showMessageDialog(null, "Backup realizado corretamente");
+            try {
+                Files.delete(Paths.get("src/Main/backupString.txt"));
+            } catch (IOException ex) {
+                Main.p("Erro ao deletar o arquivo");
+            }            
         }           
     }
     public void generateFile(String backup, String fileName){
@@ -53,26 +62,28 @@ public class GenerateBackupOrRecoverDB {
             Main.p("Erro ao gerar o backup");
         }        
     }
-    public void recoverDB(){        
-        if(lojaDB.askPassword(null, true)==false)   
-            return;
-        getFormatAndExecuteQueryFileString("src/Main/query.sql"); 
+    public void recoverDB(){            
         //-----------------------------------------------------------------
         //-----------------------------------------------------------------
-        try{
-            String backupString = getFileString("src/Main/backupString.txt");         
-            String backupSql=getQueriesOfBackup(backupString);
-            generateFile(backupSql, "backup.sql");            
+        try{             
+            String backupString = getFileString("src/Main/backupString.txt");
+            String backupSql=getQueriesOfBackup(backupString);            
+            String message = "Tem certeza que deseja recuperar os dados?";        
+            int answ = JOptionPane.showConfirmDialog(null, message, "Confirmação", JOptionPane.OK_CANCEL_OPTION);
+            if (answ != JOptionPane.OK_OPTION) 
+                return;        
+            if(lojaDB.askPassword(null, true)==false)   
+                return;            
+            getFormatAndExecuteQueryFileString("src/Main/query.sql");
+            generateFile(backupSql, "src/Main/backup.sql");            
             executeQueriesOfSqlFile("src/Main/backup.sql");
             Files.delete(Paths.get("src/Main/backupString.txt"));
             Files.delete(Paths.get("src/Main/backup.sql"));            
-            JOptionPane.showMessageDialog(null, "Recuperação feita com sucesso! Reinicie o programa");
-            System.exit(0);
+            JOptionPane.showMessageDialog(null, "Recuperação feita com sucesso!");
         }catch(FileNotFoundException e){
             String message="Coloque o arquivo backupString.txt em  src/Main/";
-            message+="\nDepois esse arquivo é deletado por segurança. Portanto, salve-o em outro lugar";
-            message+="\nEntrar no novo email da mamae (sorayasimaosgs@gmail.com) com (261287sgs) para pegar esse arquivo.";
-            
+            message+="\nDepois esse arquivo é deletado por segurança.\n Para prevenir, faça um novo backup antes defazer essa recuperação.";
+            message+="\nEntrar no novo email da mamae (sorayasimaosgs@gmail.com) com (261287sgs) para pegar esse arquivo.";            
             JOptionPane.showMessageDialog(null, message);
             e.printStackTrace();
         }catch(Exception e){
@@ -143,8 +154,7 @@ public class GenerateBackupOrRecoverDB {
                      "\nDepois esse arquivo é deletado por segurança. Portanto, salve-o em outro lugar"+
                 "\nEntrar no novo email da mamae (sorayasimaosgs@gmail.com) com (261287sgs) para pegar esse arquivo";
         setTableNames();
-        for(String tableName: tableNamesSet){
-            String query = "Select * from "+tableName;  
+        for(String tableName: tableNamesSet){ 
             String stringOfTable = mountStringOfTable(tableName); 
             backupString+= stringOfTable;   
         }         
@@ -204,6 +214,18 @@ public class GenerateBackupOrRecoverDB {
         } // end catch 
         return tableString;
     } 
+    private int getCurrentTotalRows(){
+        setTableNames();
+        ResultSet resultSet=null;
+        int numberOfRows=0;
+        for(String tableName: tableNamesSet){
+            try{
+                resultSet =lojaDB.executeQuery("SELECT * FROM "+ tableName);
+            }catch(Exception e){e.printStackTrace();}
+            numberOfRows+=lojaDB.getNumberRowsOfQuery(resultSet);
+        }
+        return numberOfRows;       
+    }
     private void setTableNames(){
         try{
             DatabaseMetaData md = lojaDB.getMetaData();

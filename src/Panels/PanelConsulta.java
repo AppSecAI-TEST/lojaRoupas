@@ -317,17 +317,17 @@ public class PanelConsulta extends javax.swing.JPanel {
         if(lojaDB.askPassword(null, true)==false)   
             return;
         String query = "SELECT ID_Mercadoria FROM Mercadoria WHERE Status= \'no estoque\'";
-        int numMercadoriasNoEstoque=lojaDB.getNumberColumnsOfQuery(query);
+        int numMercadoriasNoEstoque=lojaDB.getNumberRowsOfQuery(query);
         query = "SELECT SUM(Preco_Merc) FROM Mercadoria WHERE Status= \'no estoque\'";
         double valorNoEstoque=Main.formatDoubleString(lojaDB.getUniqueValueOfQuery(query));        
         //-----------------------------------------------------------------------
         query = "SELECT ID_Mercadoria FROM Mercadoria WHERE Status= \'encomendado\'";
-        int numMercadoriasEncomendadas=lojaDB.getNumberColumnsOfQuery(query);
+        int numMercadoriasEncomendadas=lojaDB.getNumberRowsOfQuery(query);
         query = "SELECT SUM(Preco_Merc) FROM Mercadoria WHERE Status= \'encomendado\'";
         double valorEncomendadas=Main.formatDoubleString(lojaDB.getUniqueValueOfQuery(query));  
         //-----------------------------------------------------------------------
         query = "SELECT ID_Mercadoria FROM Mercadoria WHERE Status= \'vendido\'";
-        int numMercadoriasVendidas=lojaDB.getNumberColumnsOfQuery(query);
+        int numMercadoriasVendidas=lojaDB.getNumberRowsOfQuery(query);
         query = "SELECT SUM(Preco_Merc) FROM Mercadoria WHERE Status= \'vendido\'";
         double valorVendidas=Main.formatDoubleString(lojaDB.getUniqueValueOfQuery(query));  
         //-----------------------------------------------------------------------     

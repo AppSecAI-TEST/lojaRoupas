@@ -96,10 +96,11 @@ public class JTabbedPaneFrame extends JFrame {
         panelVenda.setStatusCaixaLabel(flag);
     }
 
-    public void setBooleanCaixaAberto() {
-        ResultSet results = lojaDB.executeQuery("Select * from Caixa where Status = \'aberto\'");
+    public void setBooleanCaixaAberto() {        
         boolean flagAberto = false;
+        ResultSet results=null;
         try {
+            results = lojaDB.executeQuery("Select * from Caixa where Status = \'aberto\'");
             if (results.next()) {
                 flagAberto = true;
             }
@@ -132,7 +133,7 @@ public class JTabbedPaneFrame extends JFrame {
                 }
             }
         } catch (Exception exception) {
-            System.out.println("Erro ao verificar se o caixa se está aberto");
+            System.out.println("Erro ao tentar coletar os dados do caixa");
             exception.printStackTrace();
         } // end catch        
     }

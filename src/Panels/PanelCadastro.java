@@ -52,9 +52,6 @@ public class PanelCadastro extends javax.swing.JPanel {
         tableCadastro.setDefaultEditor(Object.class, null);
         tableCadastro.addMouseListener(new PopClickListener(this, tableCadastro));
     }    
-    public ResultSet executeQuery(String query){
-        return lojaDB.executeQuery(query);
-    }
     private void createTable(String[] columnNames){
         DefaultTableModel model;      
         model = new DefaultTableModel(columnNames,0);

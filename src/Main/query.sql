@@ -17,7 +17,6 @@ CREATE TABLE Transacao
     Hora_Transacao                        time NULL ,
 	Descricao_Transacao                         char(255) NULL   ,
 		-- Na venda: A descricao criada com os itens da venda e seus descontos
-		###tipo###
 		-- Na devolucao: A descricao é o ID_Mercadoria ou vazia/null se for produto não cadastrado
 		-- Na caixa: "retirada do caixa"  "adição ao caixa"
 	Cliente                          char(40)   NULL       ,
@@ -126,22 +125,25 @@ CREATE TABLE Senha
 	PRIMARY KEY (ID_Senha)
 );
 --    *********************************************************************************************
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("camisa");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("vestido");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("saia");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("short");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("calça");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("conjunto");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("cinto");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("arco");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("biquini");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("calcinha e sutiã");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("jaqueta");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("bebê");
-INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("outros");
 INSERT into Senha(String_Senha, Tipo_Senha) VALUES ("sgscb", "1");
 INSERT into Senha(String_Senha, Tipo_Senha) VALUES ("02042010", "1");
-INSERT into Senha(String_Senha, Tipo_Senha) VALUES ("criancabonita17", "2");
+INSERT into Senha(String_Senha, Tipo_Senha) VALUES ("261287", "2");
+-- INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("camisa");
+-- INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("vestido");
+-- INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("saia");
+-- INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("short");
+-- INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("calça");
+-- INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("conjunto");
+-- INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("cinto");
+-- INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("arco");
+-- INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("biquini");
+-- INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("calcinha e sutiã");
+-- INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("jaqueta");
+-- INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("bebê");
+-- INSERT into TipoMercadoria(Descricao_TipoMercadoria) VALUES ("outros");
+-- INSERT into Senha(String_Senha, Tipo_Senha) VALUES ("sgscb", "1");
+-- INSERT into Senha(String_Senha, Tipo_Senha) VALUES ("02042010", "1");
+-- INSERT into Senha(String_Senha, Tipo_Senha) VALUES ("criancabonita17", "2");
 
 -- insert into caixa(Status, Data_Abertura, Hora_Abertura, Adicionado, Retirado) Values ('aberto', '2017-07-28', '17:00:00', 20.3, 0);
 

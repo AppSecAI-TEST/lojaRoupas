@@ -24,9 +24,15 @@ public class PanelUsuario extends javax.swing.JPanel {
         String d=descField.getText();
         String query = "INSERT INTO Usuario(Nome_Usuario, Descricao_Usuario) VALUES (\'"+
             n+"\',\'"+d+"\')";
-        lojaDB.executeQuery(query);
-        limparCampos();
-        JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);                     
+        try{
+            lojaDB.executeQuery(query);
+            limparCampos();
+            JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);               
+        }catch(Exception e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erro no banco de dados! Tente novamente com dados válidos!", "Aviso", JOptionPane.WARNING_MESSAGE);   
+        }
+                  
     }
     void limparCampos(){
         nomeField.setText("");

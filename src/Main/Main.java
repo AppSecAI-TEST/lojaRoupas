@@ -1,5 +1,4 @@
 package Main;
-import auxClasses.BackupDB;
 import auxClasses.RequestFocusListener;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -24,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import java.net.InetAddress;
+import java.sql.DatabaseMetaData;
 import java.util.Date;
 import javax.swing.Box;
 import javax.swing.JLabel;
@@ -45,14 +45,13 @@ public class Main {
     static long time = -1;
     static DateAndHour myDateAndHour;
     static int secondsToWaitTimeServer = 1;
-    boolean flagPassword = true;
     public Main() {   
-        pathConnection = getPathConnection("CriancaBonitaDB");
-        if(flagPassword && askPassword(null, false)==false)   {
+        pathConnection = getPathConnection("CriancaBonitaDB");        
+        //new GenerateBackupOrRecoverDB(this).recoverDB();       
+        if(askPassword(null, false)==false)   {
             close_connection(pathConnection.connection, pathConnection.statement);
             System.exit(0);
         }             
-        runBackup();
         tabbedFrame = new JTabbedPaneFrame(this);
         tabbedFrame.setVisible(true);
         tabbedFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -75,10 +74,13 @@ public class Main {
         while(tabbedFrame.isEnabled()){}       
         close_connection(pathConnection.connection, pathConnection.statement);        
     }
-    public Main(boolean flagPass){
-        flagPassword=flagPass;
-        pathConnection = getPathConnection("CriancaBonitaDB");  
-        runBackup();
+    public DatabaseMetaData getMetaData(){
+        try {
+            return pathConnection.connection.getMetaData();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     public boolean askPassword(Component c, boolean flagAdmin ){
         String title = "Senha necessária";
@@ -140,7 +142,7 @@ public class Main {
             }
             catch(Exception e)
             {
-                System.out.println(e);
+                e.printStackTrace(); 
                 return false;
             }
         }
@@ -155,7 +157,7 @@ public class Main {
             df.parse(date);
             return true;
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace(); 
             return false;
         }
     }
@@ -249,18 +251,25 @@ public class Main {
         }
         catch (Exception exception) {
             System.out.println("Erro em coletar dados da tabela ");  
-            System.out.println(exception);
+            exception.printStackTrace(); 
         } // end catch
        
     }    
     public void addInCaixaMap(String key, String value){
+        Main.p(key+" "+value);
         caixaMap.put(key, value);
     }
     public String getOfCaixa(String mykey){
+        Main.p("myKey: "+mykey);
+        
         for(String key: caixaMap.keySet()){
+            Main.p(key);
             if(mykey.equals(key))
                 return caixaMap.get(key);
         }
+        Main.p("saiu: "+mykey);
+        Exception e=new Exception();
+        e.printStackTrace();
         System.out.println("Chave não encontrada em caixaMap");
         return null;
     }
@@ -323,9 +332,11 @@ public class Main {
             dateAndHour.hour=hourFormat.format(time);
         }
         catch(Exception e){
+            e.printStackTrace();
             Main.p("Clique com o botão direito em libraries e em Add JAR/Folder");
             Main.p("Ou ligue a internet");
             dateAndHour=null;
+
         }
         if(System.currentTimeMillis()-timeAux<secondsToWaitTimeServer*1000-200)
             if(dateAndHour!=null)
@@ -338,29 +349,37 @@ public class Main {
     public void removeRow(int row, JTable table){
         DefaultTableModel model=(DefaultTableModel)table.getModel();
         model.removeRow(row);
-    }  
-    public static ResultSet executeQuery(Statement statement, String query){
-        //query=prepareToDB(query);
-        try {
+    } 
+    public static ResultSet executeQuery (Statement statement, String query) throws Exception{
+//        try {
             String operacao = query.split(" ")[0];
             // query database with insert
             operacao =  operacao.toLowerCase();
             if(operacao.equals("insert") || operacao.equals("delete") || operacao.equals("update"))
             {
-                System.out.println("Operacao realizada com sucesso");
+                //System.out.println("Operacao realizada com sucesso");
                 statement.executeUpdate(query);
                 return null;
             }
             if(operacao.equals("select") )
                 return statement.executeQuery(query);                     
             return null;
+//        } catch (Exception exception) {
+//            System.out.println("Erro na execução do query: "+query);   
+//            exception.printStackTrace();
+//            return null;
+//        } // end catch
+    }    
+    public void executeUpdate(String query){
+        Statement statement=pathConnection.statement;
+        try {
+            statement.executeUpdate(query);  
         } catch (Exception exception) {
             System.out.println("Erro na execução do query: "+query);   
             exception.printStackTrace();
-            return null;
         } // end catch
-    }    
-    public ResultSet executeQuery(String query){
+    }        
+    public ResultSet executeQuery(String query) throws Exception{
         //query=prepareToDB(query);
         Statement statement=pathConnection.statement;
         return Main.executeQuery(statement, query);        
@@ -413,7 +432,11 @@ public class Main {
             if(askPassword(null, true)==false)   
                 return;
         String query ="UPDATE "+tableName+" SET "+ returnToSQLNameCol(tableName, nameColumn)+" = "+ newValue+" WHERE ID_"+tableName+" = "+primaryKey;
-        executeQuery(query);
+        try{
+            executeQuery(query);
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(table, "Erro ao tentar mandar ao banco de dados. Use um valor válido", "Aviso", JOptionPane.WARNING_MESSAGE);
+        }
     }
     private String returnToSQLNameCol(String tableName, String nameCol){
         String [] columnsToComplete =new String[]{"Nome", "Endereco", "Email", "CPF", "Descricao", "Saldo"};
@@ -468,7 +491,7 @@ public class Main {
                 JOptionPane.showMessageDialog(table, "Deve cadastrar pelo menos um sobrenome", "Aviso", JOptionPane.WARNING_MESSAGE);                                 
                 return false;
             }
-            Object hasClient = getColumnWithColumnKey("Cliente", "Nome_Cliente", "\'"+newValue+"\'", "*");;
+            Object hasClient = getColumnWithColumnKey("Cliente", "Nome_Cliente", stringToSql(newValue), "*");;
             if(hasClient != null){
                 JOptionPane.showMessageDialog(null, "Esse nome já está registrado", "Aviso", JOptionPane.WARNING_MESSAGE);   
                 return false;
@@ -553,7 +576,7 @@ public class Main {
         }
         catch(ClassNotFoundException exception){
             System.out.println("Aperte o botao direito em Libraries e adicione o jar mysql-connector-java");
-            System.out.println(exception);
+            exception.printStackTrace();
         }
         try{
             // establish connection to database
@@ -563,7 +586,7 @@ public class Main {
             statement = connection.createStatement();
         } catch (SQLException exception) {            
             System.out.println("O banco de dados \""+ dataBaseName+"\" não foi encontrado");  
-            System.out.println(exception);
+            exception.printStackTrace();
         } // end catch
         return new PathConnection(connection, statement);
     }    
@@ -574,7 +597,7 @@ public class Main {
         } // end try                                               
         catch (Exception exception) {
             System.out.println("Erro ao tentar fechar a conexão");
-            System.out.println(exception);
+            exception.printStackTrace();
         } // end catch 
     }
     public static void formattedMessage(Component c, String message,String title, int option){
@@ -583,19 +606,19 @@ public class Main {
         JOptionPane.showMessageDialog(c, message,title, option);
         UIManager.put("Label.font", original); 
     }
-    public int getNumberColumnsOfQuery(String query){
-        ResultSet results = executeQuery(query);
+    public int getNumberColumnsOfQuery(String query){        
         int numMercadorias=0;
         try{
+            ResultSet results = executeQuery(query);
             results.last();            
             numMercadorias = results.getRow();
-        }catch(Exception e){}
+        }catch(Exception e){e.printStackTrace();}
         return numMercadorias;
     }
     public String getUniqueValueOfQuery(String query){
-        ResultSet results = executeQuery(query);
         String obj=null;
-        try{
+        try{            
+            ResultSet results = executeQuery(query);
             results.next();            
             obj = results.getString(1);
         }catch(Exception e){}
@@ -639,6 +662,11 @@ public class Main {
     public static void cleanTable(JTable table){
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
+    }
+    public static String stringToSql(String columnValue){
+        columnValue=columnValue.replace("\\", "\\\\");
+        columnValue=columnValue.replaceAll("'", "\\'");
+        return "\'"+columnValue+"\'";
     }
     public static String formatStringToSql(String columnType, String columnValue){
         if(columnType.equals("Boolean")){
@@ -698,12 +726,13 @@ public class Main {
             System.out.println("Não há caixa aberto.");
             return "0";
         }
-        ResultSet results =executeQuery("SELECT * FROM Transacao where ID_Caixa = " + this.getOfCaixa("ID_Caixa"));
-        if(results==null){
-            System.out.println("Não há transações registradas no Caixa atual.");
-            return "0";
-        }
+        
         try{
+            ResultSet results =executeQuery("SELECT * FROM Transacao where ID_Caixa = " + this.getOfCaixa("ID_Caixa"));
+            if(results==null){
+                System.out.println("Não há transações registradas no Caixa atual.");
+                return "0";
+            }
             ResultSetMetaData metaData = results.getMetaData();
             int numberOfColumns = metaData.getColumnCount();
             int iDinheiro = -1;
@@ -777,13 +806,13 @@ public class Main {
         if(caixaAberto==false){
             System.out.println("Não há caixa aberto.");
             return 0;
-        }
-        ResultSet results =executeQuery("SELECT * FROM Transacao where ID_Caixa = " + this.getOfCaixa("ID_Caixa"));
-        if(results==null){
-            System.out.println("Não há transações registradas no Caixa atual.");
-            return 0;
-        }
+        }        
         try{
+            ResultSet results =executeQuery("SELECT * FROM Transacao where ID_Caixa = " + this.getOfCaixa("ID_Caixa"));
+            if(results==null){
+                System.out.println("Não há transações registradas no Caixa atual.");
+                return 0;
+            }
             ResultSetMetaData metaData = results.getMetaData();
             int numberOfColumns = metaData.getColumnCount();
             int iTipo = -1;
@@ -835,15 +864,16 @@ public class Main {
         } // end catch         
         return vendasDev;
     }
-    public void updateTable(JTable table, JPanel tablePanel, String tableName, boolean flagSelect, ResultSet results){
-        if(flagSelect==false)            
-            results =executeQuery("SELECT * FROM "+ tableName);
+    public void updateTable(JTable table, JPanel tablePanel, String tableName, boolean flagSelect, ResultSet results){        
         int width=100;
-        if(results==null){
-            System.out.println("Erro ao imprimir os dados, o query não foi executado corretamente.");
-            return;
-        }
         try{
+            if(flagSelect==false)            
+                results =executeQuery("SELECT * FROM "+ tableName);
+            
+            if(results==null){
+                System.out.println("Erro ao imprimir os dados, o query não foi executado corretamente.");
+                return;
+            }
             ResultSetMetaData metaData = results.getMetaData();
             int numberOfColumns = metaData.getColumnCount();
             int iDesc=-1;
@@ -878,16 +908,17 @@ public class Main {
                 }
                 addRow(columns, table);
             } 
+            int numCol=table.getColumnCount();
+            if(tableName.equals("Transacao"))
+                tablePanel.setPreferredSize(new Dimension(numCol*width-width,300)); 
+            else
+                tablePanel.setPreferredSize(new Dimension(numCol*width-width/2,300)); 
         }
         catch (Exception exception) {
             System.out.println("Erro ao montar a tabela");
             exception.printStackTrace();
         } // end catch 
-        int numCol=table.getColumnCount();
-        if(tableName.equals("Transacao"))
-            tablePanel.setPreferredSize(new Dimension(numCol*width-width,300)); 
-        else
-            tablePanel.setPreferredSize(new Dimension(numCol*width-width/2,300)); 
+        
     } 
     public String changeSomeNamesOfColumns(String col){
         if(col.equals("ID_Caixa"))
@@ -946,17 +977,17 @@ public class Main {
         return nameCol;
     }
     public void setComboBox(String tableName, String columnName, JComboBox box){
-        String query="SELECT * From "+tableName;
-        ResultSet results = executeQuery(query);
-        int numberOfColumns=-1, columnOfDescricao=-1;
-        LinkedList <String> list =new LinkedList(); 
-        String s;
-        if(results==null)
-        {
-            System.out.println("Nenhum resultado da busca foi encontrado.");
-            return;
-        }
+        String query="SELECT * From "+tableName;        
         try{
+            ResultSet results = executeQuery(query);
+            int numberOfColumns=-1, columnOfDescricao=-1;
+            LinkedList <String> list =new LinkedList(); 
+            String s;
+            if(results==null)
+            {
+                System.out.println("Nenhum resultado da busca foi encontrado.");
+                return;
+            }
             ResultSetMetaData metaData = results.getMetaData();
             numberOfColumns = metaData.getColumnCount();
             columnOfDescricao=-1;
@@ -978,6 +1009,7 @@ public class Main {
         }
         catch (Exception exception) {
             System.out.println("Erro ao pegar os tipos de mercadorias");
+            exception.printStackTrace();
         } // end catch  
         
     }
@@ -996,7 +1028,9 @@ public class Main {
         saldo +=credit;
         saldoS=Main.twoDig(saldo);
         String query = "UPDATE Cliente SET Saldo_Cliente = "+saldoS+" WHERE Nome_Cliente = \'"+nameClient+"\'";
-        executeQuery(query);
+        try{            
+            executeQuery(query);
+        }catch(Exception e){}
     }
     public static int getIndexColumnWithColumnName(JTable table, String columnName){
         for(int i=0;i<table.getColumnCount();i++)
@@ -1004,16 +1038,15 @@ public class Main {
                 return i;
         return -1;
     }
-    public String getColumnWithColumnKey(String tableName, String nameColumnKey, String columnKey, String nameColumn ){        
-        //  CUIDADO COM O columnKey,ELE DEVE SER nameColumn com aspas caso seja do tipo String        
-        String query = "Select "+nameColumn+" from "+tableName+" where "+nameColumnKey+"= "+columnKey;
-        ResultSet results = executeQuery(query);
-        if(results==null){
-            System.out.println("Nenhum resultado da busca foi encontrado.");
-            System.out.println("Query: "+query);
-            return null;
-        }
+    public String getColumnWithColumnKey(String tableName, String nameColumnKey, String columnKey, String nameColumn){       
+        String query = "Select "+nameColumn+" from "+tableName+" where "+nameColumnKey+"= "+columnKey;        
         try{            
+            ResultSet results = executeQuery(query);
+            if(results==null){
+                System.out.println("Nenhum resultado da busca foi encontrado.");
+                System.out.println("Query: "+query);
+                return null;
+            }
             if(results.next())
                 return results.getString(1);       
             else
@@ -1029,9 +1062,10 @@ public class Main {
         return getColumnWithColumnKey(tableName, "ID_"+tableName, primaryKey, nameColumn);        
     }
     public void runBackup(){
+        Main main = this;
         new Thread(){
             public void run(){
-                new BackupDB(pathConnection);
+                new GenerateBackupOrRecoverDB(main).generateBackup();
             }
         }.start();
     }

@@ -83,7 +83,7 @@ public class AddOrRemovePanel extends javax.swing.JPanel {
             String creditoPorCliente = lojaDB.getColumnWithColumnKey("Cliente", "Nome_Cliente", "\'"+clientBox.getSelectedItem()+"\'", "Saldo_Cliente");
             if(Main.formatDoubleString(creditoPorCliente)!=0)
                 saldoClientLabel.setText("saldo: "+creditoPorCliente);
-        }catch(Exception ex){}   
+        }catch(Exception ex){ex.printStackTrace();}   
     }         
     public String getData(){
         return dataField.getText();

@@ -267,9 +267,14 @@ public class PanelEstatistica extends javax.swing.JPanel {
             return;
         }
         String query= getQuery();
-        
-        ResultSet results = lojaDB.executeQuery(query);
-        lojaDB.updateTable(tableEstat, tableEstatisticaPanel, "Caixa", true, results);
+        ResultSet results=null;
+        try{
+            results = lojaDB.executeQuery(query);            
+            lojaDB.updateTable(tableEstat, tableEstatisticaPanel, "Caixa", true, results);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }        
     }
     private boolean isValidKey(){
         String keyOfSearch=searchField.getText().trim();
@@ -326,7 +331,7 @@ public class PanelEstatistica extends javax.swing.JPanel {
             }
         }
         catch(Exception e){
-            //e.printStackTrace();
+            e.printStackTrace();
         }        
         if(orderDataOption.isSelected())
             query+=" ORDER BY ID_Caixa DESC, Data_Abertura DESC";

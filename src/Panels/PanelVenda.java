@@ -140,15 +140,16 @@ public class PanelVenda extends javax.swing.JPanel {
     }
     public static ConsultaMercadoria getConfirmMessage(Main lojaDB, String barCode){
         //System.out.println(barCode);
-        ResultSet results = lojaDB.executeQuery("Select * from Mercadoria where ID_Mercadoria = "+barCode);
+        
         String message="";
         HashMap <String, String> mercadoriaMap=new HashMap();
-        if(results==null)
-        {
-            System.out.println("Nenhum resultado da busca foi encontrado.");
-            return null;
-        }
+        
         try{
+            ResultSet results = lojaDB.executeQuery("Select * from Mercadoria where ID_Mercadoria = "+barCode);
+            if(results==null){
+                System.out.println("Nenhum resultado da busca foi encontrado.");
+                return null;
+            }
             ResultSetMetaData metaData = results.getMetaData();
             int numberOfColumns = metaData.getColumnCount();
             String nameColumn[]=new String[numberOfColumns];      

@@ -35,9 +35,16 @@ public class PanelMercadoria extends javax.swing.JPanel {
         
         String query = "INSERT INTO Mercadoria(ID_Mercadoria, Descricao_Mercadoria, Observacao, TipoMercadoria, Tamanho, Tamanho_est, Status, Preco_Merc)"+
         " VALUES (\'"+n+"\',\'"+d+"\', \'"+obs+"\', \'"+m+"\', \'"+tam+"\', \'"+e+"\',\'"+status+"\',"+preco+")";
-        lojaDB.executeQuery(query);
+        try{
+            lojaDB.executeQuery(query);  
+            JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);  
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(null, "Erro ao tentar adicionar ao banco de dados, há algo inválido!", "Aviso", JOptionPane.WARNING_MESSAGE);  
+            ex.printStackTrace();
+        }
+        
         limparCampos();   
-        JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);                     
+                           
     }
     void limparCampos(){
         descField.setText("");
@@ -51,9 +58,13 @@ public class PanelMercadoria extends javax.swing.JPanel {
     boolean isValidEntry(){
         String n=barCodeField.getText();
         if(n.equals("")) return false;
-        ResultSet results = lojaDB.executeQuery("Select * from Mercadoria where ID_Mercadoria = "+n);
+        if(Main.isIntegerValid(n)==false){
+            JOptionPane.showMessageDialog(null, "O código deve ser um número", "Aviso", JOptionPane.WARNING_MESSAGE);                                     
+            return false;
+        }
         boolean hasEntry=false;
         try{
+            ResultSet results = lojaDB.executeQuery("Select * from Mercadoria where ID_Mercadoria = "+n); 
             if(results.next()){
                 JOptionPane.showMessageDialog(null, "Esse código de barras já foi cadastrado", "Aviso", JOptionPane.WARNING_MESSAGE);                     
                 hasEntry=true;
@@ -94,6 +105,7 @@ public class PanelMercadoria extends javax.swing.JPanel {
         }
         catch(Exception ex){
             JOptionPane.showMessageDialog(null, "Preencha o preço corretamente", "Aviso", JOptionPane.WARNING_MESSAGE);
+            ex.printStackTrace();
             return false;
         }
         return true;        

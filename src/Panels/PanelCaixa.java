@@ -182,6 +182,7 @@ public class PanelCaixa extends javax.swing.JPanel {
         dataAberturaLabel = new javax.swing.JLabel();
         horaAberturaLabel = new javax.swing.JLabel();
         adicionadoLabel = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         abrirFecharCaixaButton.setText("Abrir caixa");
         abrirFecharCaixaButton.addActionListener(new java.awt.event.ActionListener() {
@@ -257,6 +258,14 @@ public class PanelCaixa extends javax.swing.JPanel {
 
         adicionadoLabel.setText(" ");
 
+        jButton1.setText("Fazer backup ");
+        jButton1.setToolTipText("Guardar dados na internet");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -294,7 +303,10 @@ public class PanelCaixa extends javax.swing.JPanel {
                                     .addComponent(retiradoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
                                     .addComponent(idCaixaLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(adicionadoLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addComponent(retirarDinheiroButton))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(retirarDinheiroButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1)))
                         .addGap(0, 133, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -307,7 +319,9 @@ public class PanelCaixa extends javax.swing.JPanel {
                     .addComponent(verCaixaAtualButton)
                     .addComponent(adicionarDinheiroButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(retirarDinheiroButton)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(retirarDinheiroButton)
+                    .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
@@ -471,7 +485,9 @@ public class PanelCaixa extends javax.swing.JPanel {
                 + " , FinalInformado = " + caixaInformado + " , Observacao = \'" + obs + "\' , QuebraDeCaixa = "
                 + quebraDeCaixa + ", VendasDevolucoes = "+vendasDevLabel.getText()+"  where ID_Caixa = " + lojaDB.getOfCaixa("ID_Caixa");
         //Main.p(query);
-        lojaDB.executeQuery(query);
+        try{
+            lojaDB.executeQuery(query);
+        }catch(Exception e){e.printStackTrace();}
         update();
     }
     private String completeDate(String date) {
@@ -534,6 +550,14 @@ public class PanelCaixa extends javax.swing.JPanel {
             }         
         update();
     }//GEN-LAST:event_somenteCaixaAtualCheckBoxActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String message = "Para recuperar os dados, coloque o arquivo backupString.txt em  src/Main/, e"
+                +     "\nexecute o método recoverDB da classe GenerateBackupOrRecoverDB. \n"+
+                     "\nDepois esse arquivo é deletado por segurança. Portanto, salve-o em outro lugar";        
+        lojaDB.runBackup();
+        JOptionPane.showMessageDialog(null, message);
+    }//GEN-LAST:event_jButton1ActionPerformed
     private boolean isValidEntry(AbrirCaixaPanel abrirPanel) {
         String data = abrirPanel.getData();
         String hora = abrirPanel.getHora();
@@ -576,15 +600,23 @@ public class PanelCaixa extends javax.swing.JPanel {
         data = Main.formatStringToSql("Date", data);
         hora = Main.formatStringToSql("Time", hora);
         
-        JOptionPane.showMessageDialog(null, "Caixa aberto com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);
         String query = "insert into caixa(Status, Data_Abertura, Hora_Abertura, Adicionado, Retirado, VendasDevolucoes) Values ('aberto', " + data + ", " + hora + ", " + value + ", 0, 0)";
-        lojaDB.executeQuery(query);
+        
         //----------------------------------------------------------------------
         //----------------------------------------------------------------------    
-        update();
-        String query2 = "INSERT into Transacao(Tipo_Transacao, Dinheiro, Data_Transacao, Hora_Transacao, "
-                + "Descricao_Transacao, ID_Caixa) VALUES (\"caixa\"," + value + "," + data + "," + hora + ",\"adição ao caixa\"," + lojaDB.getOfCaixa("ID_Caixa") + ")";
-        lojaDB.executeQuery(query2);
+        try{
+            lojaDB.executeQuery(query);
+            update();
+            String query2 = "INSERT into Transacao(Tipo_Transacao, Dinheiro, Data_Transacao, Hora_Transacao, "
+                    + "Descricao_Transacao, ID_Caixa) VALUES (\"caixa\"," + value + "," + data + "," + hora + ",\"adição ao caixa\"," + lojaDB.getOfCaixa("ID_Caixa") + ")";
+
+            lojaDB.executeQuery(query2);
+            JOptionPane.showMessageDialog(null, "Caixa aberto com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Erro interno no banco de dados!", "Aviso", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+        }
+        
         update();
     }
 
@@ -601,8 +633,7 @@ public class PanelCaixa extends javax.swing.JPanel {
             initialValue = Double.parseDouble(lojaDB.getOfCaixa("Retirado"));
             query += Main.twoDig(value + initialValue);
         }
-        query += " where ID_Caixa = " + lojaDB.getOfCaixa("ID_Caixa");
-        lojaDB.executeQuery(query);
+        query += " where ID_Caixa = " + lojaDB.getOfCaixa("ID_Caixa");        
         //----------------------------------------------------------------------
         //----------------------------------------------------------------------     
         data = Main.formatStringToSql("Date", data);
@@ -631,12 +662,17 @@ public class PanelCaixa extends javax.swing.JPanel {
             else
                 query2+=")";
         }
-        lojaDB.executeQuery(query2);
+        try{
+            lojaDB.executeQuery(query);
+            lojaDB.executeQuery(query2);
+            String val = Main.twoDig(value);
+            if(command.equals("retirar")) 
+                val="-"+val;
+            lojaDB.addSaldoCliente(nameClient, val);
+        }catch(Exception e){e.printStackTrace();}
+        
         //---------------------------        
-        String val = Main.twoDig(value);
-        if(command.equals("retirar")) 
-            val="-"+val;
-        lojaDB.addSaldoCliente(nameClient, val);
+        
     }
 
     public void update() {
@@ -644,12 +680,20 @@ public class PanelCaixa extends javax.swing.JPanel {
         setLabelsCaixa();
         Main.cleanTable(tableCaixa);        
         if(somenteCaixaAtualCheckBox.isSelected() && lojaDB.caixaAberto){
-            ResultSet results = lojaDB.executeQuery("SELECT * FROM Transacao where ID_Caixa = " + lojaDB.getOfCaixa("ID_Caixa")+" ORDER BY ID_Caixa DESC, Data_Transacao DESC, Hora_Transacao DESC");
-            lojaDB.updateTable(tableCaixa, tableCaixaPanel, "Transacao", true, results);
+            try{
+                String query="SELECT * FROM Transacao where ID_Caixa = " + lojaDB.getOfCaixa("ID_Caixa")+" ORDER BY ID_Caixa DESC, Data_Transacao DESC, Hora_Transacao DESC";
+                ResultSet results = lojaDB.executeQuery(query);
+                lojaDB.updateTable(tableCaixa, tableCaixaPanel, "Transacao", true, results);
+                Main.p(query);
+            }catch(Exception e){e.printStackTrace();}
+            
         }
         else if(somenteCaixaAtualCheckBox.isSelected()==false){
-            ResultSet results = lojaDB.executeQuery("SELECT * FROM Transacao ORDER BY ID_Caixa DESC, Data_Transacao DESC, Hora_Transacao DESC");            
-            lojaDB.updateTable(tableCaixa, tableCaixaPanel, "Transacao", true, results);
+            try{
+                ResultSet results = lojaDB.executeQuery("SELECT * FROM Transacao ORDER BY ID_Caixa DESC, Data_Transacao DESC, Hora_Transacao DESC");
+                lojaDB.updateTable(tableCaixa, tableCaixaPanel, "Transacao", true, results);
+            }catch(Exception e){e.printStackTrace();}
+            
         }
     }
 
@@ -661,6 +705,7 @@ public class PanelCaixa extends javax.swing.JPanel {
     private javax.swing.JLabel dataAberturaLabel;
     private javax.swing.JLabel horaAberturaLabel;
     private javax.swing.JLabel idCaixaLabel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

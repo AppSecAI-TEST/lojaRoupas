@@ -55,7 +55,7 @@ public class ConfirmaVendaPanel extends javax.swing.JPanel {
                     String creditoPorCliente = lojaDB.getColumnWithColumnKey("Cliente", "Nome_Cliente", "\'"+clienteInBox.getSelectedItem()+"\'", "Saldo_Cliente");
                     if(Main.formatDoubleString(creditoPorCliente)!=0)
                         saldoClientLabel.setText("saldo: "+creditoPorCliente);
-                }catch(Exception ex){}                
+                }catch(Exception ex){ex.printStackTrace();}                
             }
         });        
         Main.setDateAndHour(dataField, horaField);
@@ -406,19 +406,25 @@ public class ConfirmaVendaPanel extends javax.swing.JPanel {
         if(Main.formatDoubleString(totalDiscount)>0)
            query = "INSERT into Transacao(Tipo_Transacao, Vendedor, Dinheiro, Cartao, Fiado, Com_SaldoCliente, Data_Transacao, Hora_Transacao, "
                + "Descricao_Transacao, ID_Caixa, Observacao, Cliente) VALUES ("
-                   + "\"venda\",\""+vendedor+"\","+ valor_em_dinheiro+","+valor_em_cartao+","+valor_fiado+","+valor_com_saldo+","+data+","+hora+",\""+
-                   descricaoVenda+"\","+lojaDB.getOfCaixa("ID_Caixa")+",\"Desconto: "+Main.validateDoubleString(totalDiscount)
-                   + "\",\""+client+"\")";
+                   + "\"venda\","+Main.stringToSql(vendedor)+","+ valor_em_dinheiro+","+valor_em_cartao+","+valor_fiado+","+valor_com_saldo+","+data+","+hora+","+
+                   Main.stringToSql(descricaoVenda)+","+lojaDB.getOfCaixa("ID_Caixa")+",\"Desconto: "+Main.validateDoubleString(totalDiscount)
+                   + "\","+Main.stringToSql(client)+")";
         else
            query = "INSERT into Transacao(Tipo_Transacao, Vendedor, Dinheiro, Cartao, Fiado, Com_SaldoCliente, Data_Transacao, Hora_Transacao, "
                + "Descricao_Transacao, ID_Caixa, Cliente) VALUES ("
-                   + "\"venda\",\""+vendedor+"\","+ valor_em_dinheiro+","+valor_em_cartao+","+valor_fiado+","+valor_com_saldo+","+data+","+hora+",\""+
-                   descricaoVenda+"\","+lojaDB.getOfCaixa("ID_Caixa")+ ",\""+client +"\")";
-        lojaDB.executeQuery(query);
+                   + "\"venda\","+Main.stringToSql(vendedor)+","+ valor_em_dinheiro+","+valor_em_cartao+","+valor_fiado+","+valor_com_saldo+","+data+","+hora+","+
+                   Main.stringToSql(descricaoVenda)+","+lojaDB.getOfCaixa("ID_Caixa")+ ","+Main.stringToSql(client) +")";
+        try{
+            lojaDB.executeQuery(query);  
+            JOptionPane.showMessageDialog(concluirButton, "Venda realizada com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(concluirButton, "Erro ao tentar adicionar ao banco de dados, há algo inválido!", "Aviso", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+        }
         
         updateStatusProducts(); 
 
-        JOptionPane.showMessageDialog(concluirButton, "Venda realizada com sucesso!", "Aviso", JOptionPane.WARNING_MESSAGE);            
+                    
         panelVenda.returnVisible();
     }//GEN-LAST:event_concluirButtonActionPerformed
     private String getOffTroco(){
@@ -449,7 +455,10 @@ public class ConfirmaVendaPanel extends javax.swing.JPanel {
             String elemOfProduct[]=product.split("#");            
             barCode = elemOfProduct[0];
             String query1 = "UPDATE Mercadoria SET Status= \'vendido\' WHERE ID_Mercadoria = "+barCode;
-            lojaDB.executeQuery(query1);  
+            try{
+                lojaDB.executeQuery(query1);  
+            }catch(Exception e){}
+            
         }
     }
     private String getDiscount(){

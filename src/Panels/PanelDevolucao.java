@@ -70,7 +70,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
             String creditoPorCliente = lojaDB.getColumnWithColumnKey("Cliente", "Nome_Cliente", "\'"+clientInBox.getSelectedItem()+"\'", "Saldo_Cliente");
             if(Main.formatDoubleString(creditoPorCliente)!=0)
                 saldoClientLabel.setText("saldo: "+creditoPorCliente);
-        }catch(Exception ex){}   
+        }catch(Exception ex){ex.printStackTrace();}   
     }         
     private void createTable(String[] columnNames){
         DefaultTableModel model;      
@@ -124,14 +124,14 @@ public class PanelDevolucao extends javax.swing.JPanel {
             return;
         }            
         keyOfSearch=Main.prepareToSearch(keyOfSearch);
-        String query="SELECT * From Transacao"; 
-        ResultSet results = lojaDB.executeQuery(query);
+        String query="SELECT * From Transacao";     
         int width=100;
-        if(results==null){
-            System.out.println("Nenhum resultado da busca foi encontrado.");
-            return;
-        }
         try{
+            ResultSet results = lojaDB.executeQuery(query);            
+            if(results==null){
+                System.out.println("Nenhum resultado da busca foi encontrado.");
+                return;
+            }
             int columnOfDescricaoTransaction=-1;
             int columnOfClient=-1;
             int columnOfData=-1;
@@ -616,8 +616,7 @@ public class PanelDevolucao extends javax.swing.JPanel {
             }
             data = Main.formatStringToSql("Date", data);
             hora = Main.formatStringToSql("Time", hora);
-            String query1 = "UPDATE Mercadoria SET Status = \'no estoque\' WHERE ID_Mercadoria ="+barCode;                          
-            lojaDB.executeQuery(query1);
+            String query1 = "UPDATE Mercadoria SET Status = \'no estoque\' WHERE ID_Mercadoria ="+barCode;      
             String query2 ="";
             if(inMoneyOption.isSelected())
                 query2 = "INSERT into Transacao(Tipo_Transacao, Dinheiro, Com_SaldoCliente, Data_Transacao, Hora_Transacao, "
@@ -631,17 +630,23 @@ public class PanelDevolucao extends javax.swing.JPanel {
                 + "\"devolucao\", 0.00, -"+ tot+","+data+","+hora+",\""+
                 barCode+"\","+lojaDB.getOfCaixa("ID_Caixa")+",\"Motivo: "+motivo
                 + "\",\""+client+"\")";
-                             
-            lojaDB.executeQuery(query2); 
-            if(inMoneyOption.isSelected())
-                JOptionPane.showMessageDialog(null, "Devolução concluida com sucesso", "Aviso", JOptionPane.WARNING_MESSAGE);                                             
-            if(inCreditOption.isSelected()){
-                JOptionPane.showMessageDialog(null, "Devolução e atualização de saldo do cliente concluídos com sucesso ", "Aviso", JOptionPane.WARNING_MESSAGE);
-                lojaDB.addSaldoCliente(client, tot);
-            }      
-            updateSaldoCliente();
-            horaField.setText("");
-            motivoField.setText("");
+            try{                                     
+                lojaDB.executeQuery(query1);
+                lojaDB.executeQuery(query2);
+                if(inMoneyOption.isSelected())
+                    JOptionPane.showMessageDialog(null, "Devolução concluida com sucesso", "Aviso", JOptionPane.WARNING_MESSAGE);                                             
+                if(inCreditOption.isSelected()){
+                    JOptionPane.showMessageDialog(null, "Devolução e atualização de saldo do cliente concluídos com sucesso ", "Aviso", JOptionPane.WARNING_MESSAGE);
+                    lojaDB.addSaldoCliente(client, tot);
+                }      
+                updateSaldoCliente();
+                horaField.setText("");
+                motivoField.setText("");
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null, "Erro ao tentar inserir no banco de dados, há algo inválido! Tente novamente.", "Aviso", JOptionPane.WARNING_MESSAGE);                    
+                e.printStackTrace();
+            }
+            
         }
         if(productNotRegistredCheckBox.isSelected()){
             if(isValidSituationNotRegistred()==false)
@@ -670,14 +675,19 @@ public class PanelDevolucao extends javax.swing.JPanel {
                 + "ID_Caixa, Observacao, Cliente) VALUES ("
                     + "\"devolucao\", -"+ tot+",0.00, "+data+","+hora+
                     ","+lojaDB.getOfCaixa("ID_Caixa")+",\"Motivo: "+motivo+
-                     "\",\""+client+"\")";            
-            lojaDB.executeQuery(query); 
-            if(inMoneyOption.isSelected())
-                JOptionPane.showMessageDialog(null, "Devolução concluida com sucesso", "Aviso", JOptionPane.WARNING_MESSAGE);                                             
-            if(inCreditOption.isSelected()){
-                JOptionPane.showMessageDialog(null, "Devolução e atualização de saldo do cliente concluídos com sucesso ", "Aviso", JOptionPane.WARNING_MESSAGE);
-                lojaDB.addSaldoCliente(client, tot);
-            }                           
+                     "\",\""+client+"\")";
+            try{
+                lojaDB.executeQuery(query); 
+                if(inMoneyOption.isSelected())
+                    JOptionPane.showMessageDialog(null, "Devolução concluida com sucesso", "Aviso", JOptionPane.WARNING_MESSAGE);                                             
+                if(inCreditOption.isSelected()){
+                    JOptionPane.showMessageDialog(null, "Devolução e atualização de saldo do cliente concluídos com sucesso ", "Aviso", JOptionPane.WARNING_MESSAGE);
+                    lojaDB.addSaldoCliente(client, tot);
+                }     
+            }
+            catch(Exception e){
+                JOptionPane.showMessageDialog(null, "Erro ao tentar mandar ao banco de dados! Tente com outros dados!", "Aviso", JOptionPane.WARNING_MESSAGE);                                             
+            }
         }
         
 

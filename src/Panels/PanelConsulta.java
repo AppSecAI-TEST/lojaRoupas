@@ -91,15 +91,15 @@ public class PanelConsulta extends javax.swing.JPanel {
             query="SELECT * From Cliente"; 
         else
             query="SELECT * From "+tableName; 
-        ResultSet results = lojaDB.executeQuery(query);
         int numCol=1;
-        int width=100;
-        if(results==null)
-        {
-            System.out.println("Nenhum resultado da busca foi encontrado.");
-            return;
-        }
+        int width=100;        
         try{
+            ResultSet results = lojaDB.executeQuery(query);        
+            if(results==null)
+            {
+                System.out.println("Nenhum resultado da busca foi encontrado.");
+                return;
+            }
             Set <Integer>columnsToSearch=new HashSet();
             int columnOfSaldo=-1;
             ResultSetMetaData metaData = results.getMetaData();

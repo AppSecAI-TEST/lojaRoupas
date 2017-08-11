@@ -79,13 +79,13 @@ public class PanelConferencia extends javax.swing.JPanel {
     }
     private void updateTableConferencia(){
         Main.cleanTable(tableConf);
-        ResultSet results =lojaDB.executeQuery("SELECT * FROM Mercadoria Where Status = \'no estoque\'");
         int width=100;
-        if(results==null){
-            System.out.println("Erro ao imprimir os dados, o query não foi executado corretamente.");
-            return;
-        }
         try{
+            ResultSet results =lojaDB.executeQuery("SELECT * FROM Mercadoria Where Status = \'no estoque\'");            
+            if(results==null){
+                System.out.println("Erro ao imprimir os dados, o query não foi executado corretamente.");
+                return;
+            }
             ResultSetMetaData metaData = results.getMetaData();
             int numberOfColumns = metaData.getColumnCount();
             int iId=-1;
@@ -290,7 +290,8 @@ public class PanelConferencia extends javax.swing.JPanel {
                 barCodeField.setText("");
                 idSetProductsConferred.add(barCode);
                 String query = "UPDATE Mercadoria SET Status= \'no estoque\' WHERE ID_Mercadoria = "+barCode;
-                lojaDB.executeQuery(query);
+                try{lojaDB.executeQuery(query);}
+                catch(Exception e){e.printStackTrace();}
                 return; //nao precisa mais fazer nada, pois já o produto já foi adicionado ao idSetProductsConferred
             }
         }        
